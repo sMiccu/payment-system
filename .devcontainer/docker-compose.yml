@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # Pythonバックエンドサービス
+  backend:
+    build:
+      context: ..
+      dockerfile: .devcontainer/backend/Dockerfile
+    volumes:
+      # ホストのルートフォルダをコンテナの/workspacesにマウント
+      - ..:/workspaces/${COMPOSE_PROJECT_NAME}:cached
+    ports:
+      - "8000:8000" # FastAPIなどを実行する場合
+    # environment:
+    #   - DATABASE_URL=mysql+pymysql://user:password@db:3306/devdb
+    # dbサービスが起動してからbackendを起動
+    # TODO
+    depends_on:
+      db:
+        condition: service_healthy
+    # コンテナを起動し続けるためのコマンド
+    command: sleep infinity
+    tty: true
+    stdin_open: true
+
+  # Next.jsフロントエンドサービス
+  frontend:
+    build:
+      context: ..
+      dockerfile: .devcontainer/frontend/Dockerfile
+    volumes:
+      - ..:/workspaces/${COMPOSE_PROJECT_NAME}:cached
+    ports:
+      - "3000:3000"
+    command: sleep infinity
+
+  # MySQLデータベースサービス
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: payment_system_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    volumes:
+      # 名前付きボリュームでデータを永続化
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: mysqladmin ping
+      interval: 15s
+      retries: 5
+
+# データ永続化のための名前付きボリューム
+volumes:
+  mysql-data:
