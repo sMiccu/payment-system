@@ -1,6 +1,6 @@
 {
 	"name": "Dev Container",
-	"dockerComposeFile": "./docker-compose.yml",
+	"dockerComposeFile": "../docker-compose.yml",
 	"service": "backend",
 	"workspaceFolder": "/workspaces/payment_system",
 	

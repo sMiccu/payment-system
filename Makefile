@@ -2,7 +2,7 @@
 all: pipinstall loaddata runserver
 
 pipinstall:
-	pip install -r requirements.txt
+	pip install -r payment_system/requirements.txt
 
 loaddata:
 	python payment_system/manage.py migrate
