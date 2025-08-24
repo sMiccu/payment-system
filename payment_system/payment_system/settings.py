@@ -31,7 +31,10 @@ ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
-    'calculation.apps.CalculationConfig',
+    'customer.apps.CustomerConfig',
+    'menu.apps.MenuConfig',
+    'order.apps.OrderConfig',
+    'control.apps.ControlConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
