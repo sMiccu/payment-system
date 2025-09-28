@@ -1,8 +1,8 @@
 FROM python:3.13.6
 
-# 作業ディレクトリを設定
-RUN mkdir /payment-system
-WORKDIR /payment-system
+# 作業ディレクトリを設定（devcontainer と統一）
+RUN mkdir -p /workspaces/payment_system
+WORKDIR /workspaces/payment_system
 
 # 必要なツールをインストール
 RUN apt-get update && apt-get install -y \
@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-COPY . /payment-system/
+# 参考: runtime は bind mount で上書きされるため COPY は省略可だが、必要なら残す
+COPY . /workspaces/payment_system/
 
 # RUN pip install -r requirements.txt
 
