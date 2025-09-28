@@ -7,10 +7,10 @@ services:
       context: ..
       dockerfile: .devcontainer/backend/Dockerfile
     volumes:
-      # ホストのルートフォルダをコンテナの/workspacesにマウント
-      - ..:/workspaces/${COMPOSE_PROJECT_NAME}:cached
+      # ホストのルートフォルダをコンテナの/workspacesにマウント（devcontainer.jsonと統一）
+      - ..:/workspaces/payment_system:cached
     ports:
-      - "8000:8000" # FastAPIなどを実行する場合
+      - "8000:8000" # Djangoを実行する場合
     # environment:
     #   - DATABASE_URL=mysql+pymysql://user:password@db:3306/devdb
     # dbサービスが起動してからbackendを起動
@@ -18,8 +18,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    # コンテナを起動し続けるためのコマンド
-    command: sleep infinity
+    # 依存インストール後にDjango起動（必要ならdebugpyへ置換可）
+    command: bash -lc "pip install -r payment_system/requirements.txt && cd payment_system && python manage.py runserver 0.0.0.0:8000"
     tty: true
     stdin_open: true
 
@@ -29,10 +29,11 @@ services:
       context: ..
       dockerfile: .devcontainer/frontend/Dockerfile
     volumes:
-      - ..:/workspaces/${COMPOSE_PROJECT_NAME}:cached
+      - ..:/workspaces/payment_system:cached
     ports:
       - "3000:3000"
-    command: sleep infinity
+    # Node inspector を9229で待ち受け（VS Codeからアタッチ）
+    command: sh -lc "cd frontend/webapp && npm ci && NODE_OPTIONS=--inspect=0.0.0.0:9229 npm run dev"
 
   # MySQLデータベースサービス
   db:
