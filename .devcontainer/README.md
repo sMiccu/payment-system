@@ -6,7 +6,7 @@
 - **接続先コンテナ**: `backend`
 - **同時起動サービス**: `backend`, `frontend`, `db`（MySQL）
 - **ワークスペースパス**: `/workspaces/payment_system`（全サービスで統一）
-- **ポート**: `8000`(Django), `3000`(Next.js), `9229`(Node Inspector)
+- **ポート**: `8000`(Django), `3001`(Next.js on host → container 3000), `9229/9230`(Node Inspector)
 
 ### ファイル構成
 - `devcontainer.json`: Dev Containers のメイン設定（接続先・マウント・起動サービスなど）
@@ -33,16 +33,19 @@ git add frontend/webapp && git commit -m "chore(frontend): bootstrap Next.js (TS
 1. VS Code で「Reopen in Container」を実行
 2. 起動後、自動で以下が有効
    - Django: `python manage.py runserver 0.0.0.0:8000`
-   - Next.js: `npm run dev`（`9229` で Inspector 待受け）
+   - Next.js: `next dev`（親プロセスは 9229 で Inspector 待受け、Router Server は 9230）
 3. ブラウザ確認
    - Django: `http://localhost:8000`
-   - Next.js: `http://localhost:3000`
+   - Next.js: `http://localhost:3001`（ホスト→コンテナは 3001:3000 のマッピング）
 
 ### デバッグ
-- Frontend（Node アタッチ）
-  - `.vscode/launch.json` の構成「Attach: Frontend (Node 9229)」を実行
-  - ブレークポイントは `frontend/webapp` 配下に設定
-  - マッピング: `localRoot=${workspaceFolder}/frontend/webapp`, `remoteRoot=/workspaces/payment_system/frontend/webapp`
+- Frontend（Node アタッチ、Next.js 15）
+  - `.vscode/launch.json` に 3 構成あり
+    - `Attach: Frontend (Node 9229)`（親プロセス）
+    - `Attach: Frontend Router (Node 9230)`（Router Server）
+    - `Attach: Frontend (All)`（上記 2 つの複合）
+  - ブレークポイントは `frontend/webapp` 配下のサーバー側コードに設定（API ルート、サーバーコンポーネントなど）
+  - パスマッピング: `localRoot=${workspaceFolder}/frontend/webapp`, `remoteRoot=/workspaces/payment_system/frontend/webapp`
 
 - Backend（任意: Python attach）
   - 例: `python -m debugpy --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000`
@@ -61,14 +64,14 @@ git add frontend/webapp && git commit -m "chore(frontend): bootstrap Next.js (TS
 ### コマンド例（個別操作）
 ```bash
 # backend 単体の再起動
-docker compose -f .devcontainer/docker-compose.yml up -d --build backend
+docker compose -p payment-system_devcontainer -f .devcontainer/docker-compose.yml up -d --build backend
 
 # frontend 単体の再起動
-docker compose -f .devcontainer/docker-compose.yml up -d --build frontend
+docker compose -p payment-system_devcontainer -f .devcontainer/docker-compose.yml up -d --build frontend
 
 # ログ確認
-docker compose -f .devcontainer/docker-compose.yml logs -f backend
-docker compose -f .devcontainer/docker-compose.yml logs -f frontend
+docker compose -p payment-system_devcontainer -f .devcontainer/docker-compose.yml logs -f backend
+docker compose -p payment-system_devcontainer -f .devcontainer/docker-compose.yml logs -f frontend
 ```
 
 ### 方針

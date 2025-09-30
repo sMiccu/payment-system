@@ -1,18 +1,38 @@
 {
 	"version": "0.2.0",
 	"configurations": [
-		{
-			"type": "node",
-			"request": "attach",
-			"name": "Attach: Frontend (Node 9229)",
-			"address": "frontend",
-			"port": 9229,
-			"protocol": "inspector",
-			"restart": true,
-			"localRoot": "${workspaceFolder}/frontend/webapp",
-			"remoteRoot": "/workspaces/payment_system/frontend/webapp",
-			"skipFiles": ["<node_internals>/**"]
-		}
+	  {
+		"type": "node",
+		"request": "attach",
+		"name": "Attach: Frontend (Node 9229)",
+		"address": "frontend",
+		"port": 9229,
+		"protocol": "inspector",
+		"restart": true,
+		"localRoot": "${workspaceFolder}/frontend/webapp",
+		"remoteRoot": "/workspaces/payment_system/frontend/webapp",
+		"skipFiles": ["<node_internals>/**"]
+	  },
+	  {
+		"type": "node",
+		"request": "attach",
+		"name": "Attach: Frontend Router (Node 9230)",
+		"address": "frontend",
+		"port": 9230,
+		"protocol": "inspector",
+		"restart": true,
+		"localRoot": "${workspaceFolder}/frontend/webapp",
+		"remoteRoot": "/workspaces/payment_system/frontend/webapp",
+		"skipFiles": ["<node_internals>/**"]
+	  }
+	],
+	"compounds": [
+	  {
+		"name": "Attach: Frontend (All)",
+		"configurations": [
+		  "Attach: Frontend (Node 9229)",
+		  "Attach: Frontend Router (Node 9230)"
+		]
+	  }
 	]
-}
-
+  }
