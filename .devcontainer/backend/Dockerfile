@@ -7,6 +7,10 @@ WORKDIR /workspaces/payment_system
 # 必要なツールをインストール
 RUN apt-get update && apt-get install -y \
     git \
+    graphviz \
+    libgraphviz-dev \
+    pkg-config \
+    build-essential \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 

@@ -22,6 +22,8 @@ class Customer(models.Model):
     membership = models.ForeignKey(Membership, on_delete=models.CASCADE, null=True, related_name='customer')
     start_datetime = models.DateTimeField(null=True, blank=True)
     end_datetime = models.DateTimeField(null=True, blank=True)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    paid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)

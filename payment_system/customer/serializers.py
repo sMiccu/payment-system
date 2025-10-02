@@ -5,7 +5,7 @@ from .models import Customer, CustomerBreak, Membership
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['id', 'name', 'membership', 'start_datetime', 'end_datetime']
+        fields = ['id', 'name', 'membership', 'start_datetime', 'end_datetime', 'total_amount', 'paid']
 
 class CustomerBreakSerializer(serializers.ModelSerializer):
     class Meta:
