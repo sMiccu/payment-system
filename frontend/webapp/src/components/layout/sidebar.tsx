@@ -30,11 +30,6 @@ export function AppSidebar() {
             </div>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter>
-          <div className="p-4 border-t text-gray-700 text-sm">
-            © 2025 Payment System
-          </div>
-        </SidebarFooter>
       </Sidebar>
     </SidebarProvider>
   )
