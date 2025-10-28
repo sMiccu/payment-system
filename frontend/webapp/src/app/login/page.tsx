@@ -1,4 +1,5 @@
 "use client";
+import { apiFetch } from "@/lib/api";
 import type { NextPage } from "next";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -45,29 +46,16 @@ const Page: NextPage = () => {
   });
 
   async function onSubmit(values: LoginForm) {
-    setError(""); // 前のエラーをリセット
+    setError("");
     try {
-      const res = await fetch("http://localhost:8000/payment_system/api/login/", {
+      await apiFetch("/login/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-
-      if (!res.ok) {
-        setError("ユーザー名またはパスワードが間違っています");
-        return;
-      }
-
-      const data = await res.json();
-      // JWTをlocalStorageに保存
-      localStorage.setItem("access", data.access);
-      localStorage.setItem("refresh", data.refresh);
-
-      // ログイン成功後に遷移
+      // トークンはHttpOnly Cookieに入るのでlocalStorageは不要
       router.push("/top");
-    } catch (err) {
-      console.error(err);
-      setError("サーバーに接続できませんでした");
+    } catch (e) {
+      setError("ユーザー名またはパスワードが間違っています");
     }
   }
 

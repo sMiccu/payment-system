@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 # Create your models here.
 class Store(models.Model):
@@ -36,3 +38,9 @@ class DurationRate(models.Model):
 
     def __str__(self):
         return f"{self.id} : {self.minutes}"
+
+class CustomUser(AbstractUser):
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True, blank=True, related_name='users')
+
+    def __str__(self):
+        return self.username

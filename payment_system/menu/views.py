@@ -13,4 +13,3 @@ def index(request):
 class MenuViewSet(viewsets.ModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
-    permission_classes = [AllowAny]
