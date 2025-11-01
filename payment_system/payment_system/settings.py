@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-$)niz+2b-v+nlferq2$q2)%6m%3nc!kg(8o35$tm1fxwo0cxhc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'host.docker.internal']
 
 AUTH_USER_MODEL = "control.CustomUser"
 
@@ -87,11 +87,15 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
 ]
 
 CORS_ALLOW_HEADERS = [
