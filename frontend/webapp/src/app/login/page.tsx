@@ -1,8 +1,10 @@
 "use client";
-import { apiFetch } from "@/lib/api";
+ import { zodResolver } from "@hookform/resolvers/zod";
 import type { NextPage } from "next";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+ import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,10 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -24,9 +22,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
- import { z } from "zod";
- import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
+import { apiFetch } from "@/lib/api";
+import { cn } from "@/lib/utils";
 
   const loginSchema = z.object({
    username: z.string().min(1, "ユーザー名を入力してください"),
@@ -48,7 +46,7 @@ const Page: NextPage = () => {
   async function onSubmit(values: LoginForm) {
     setError("");
     try {
-      await apiFetch("/login/", {
+      await apiFetch("/api/login/", {
         method: "POST",
         body: JSON.stringify(values),
       });
@@ -67,7 +65,7 @@ const Page: NextPage = () => {
       )}
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form method="post" onSubmit={form.handleSubmit(onSubmit)}>
           <Card className="w-[350px]">
             <CardHeader>
               <CardTitle>ログイン</CardTitle>
@@ -103,7 +101,7 @@ const Page: NextPage = () => {
             </CardContent>
             <CardFooter className="flex flex-col space-y-2">
               {error && <p className="text-red-500 text-sm truncate">{error}</p>}
-              <Button className="w-full">ログイン</Button>
+              <Button type="submit" className="w-full">ログイン</Button>
             </CardFooter>
           </Card>
         </form>

@@ -1,5 +1,6 @@
 export async function apiFetch<T>(path: string, options: RequestInit = {}) {
-  const base = process.env.NEXT_PUBLIC_API_BASE ?? 'http://localhost:8000/';
+  // 既定は相対パス（Nextのrewritesで同一オリジンにプロキシ）。必要なら NEXT_PUBLIC_API_BASE で上書き。
+  const base = process.env.NEXT_PUBLIC_API_BASE ?? '';
   const res = await fetch(`${base}${path}`, {
     credentials: 'include',           // ← 重要
     headers: {
@@ -11,7 +12,7 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}) {
   });
   if (res.status === 401) {
     // 一度だけサイレントrefresh
-    const r = await fetch(`${base}/refresh/`, {
+    const r = await fetch(`${base}/api/refresh/`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
