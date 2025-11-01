@@ -1,9 +1,11 @@
 "use client"
 
-import * as React from "react"
-import { cn } from "@/lib/utils"
-import { Button } from "./button"
 import { PanelLeftIcon } from "lucide-react"
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+import { Button } from "./button"
 
 // モバイル対応を削除した簡略版のサイドバーコンテキスト
 type SidebarContextProps = {

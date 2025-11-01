@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+
 import { AppSidebar } from "../../components/layout/sidebar";
 
 const Page: NextPage = () => {
