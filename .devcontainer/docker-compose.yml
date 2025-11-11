@@ -30,8 +30,10 @@ services:
       - ..:/workspaces/payment_system:cached
     ports:
       - "3001:3000"
+      - "9229:9229" 
     # Node inspector を9229で待ち受け（VS Codeからアタッチ）
-    command: sh -lc "cd frontend/webapp && npm ci && node --inspect=0.0.0.0:9229 ./node_modules/.bin/next dev --hostname 0.0.0.0 -p 3000"
+    # command: sh -lc "cd frontend/webapp && npm ci && node --inspect=0.0.0.0:9229 ./node_modules/.bin/next dev --hostname 0.0.0.0 -p 3000"
+    command: sh -lc "cd frontend/webapp && npm ci && npx next dev --hostname 0.0.0.0 -p 3000"
 
   # MySQLデータベースサービス
   db:
