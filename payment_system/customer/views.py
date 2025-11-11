@@ -11,6 +11,7 @@ def index(request):
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+    permission_classes = [AllowAny]
 
 class CustomerBreakViewSet(viewsets.ModelViewSet):
     queryset = CustomerBreak.objects.all()
