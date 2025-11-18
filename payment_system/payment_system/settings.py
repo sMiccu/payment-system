@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'drf_spectacular',
     'django_extensions',
+    'phonenumber_field',
 ]
 
 SIMPLE_JWT = {
@@ -69,6 +70,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
+
+PHONENUMBER_DEFAULT_REGION = 'JP'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
