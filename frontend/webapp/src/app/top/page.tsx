@@ -286,7 +286,17 @@ const Page: NextPage = () => {
                   <div
                     className="bg-gray-100 rounded-lg p-4 flex items-center justify-between shadow-sm mb-3"
                   >
-                    <div className="flex-1 font-medium text-gray-800">{customer.name}</div>
+                    <div className="flex-1 flex items-center font-medium text-gray-800">
+                      <button
+                        className="mr-3 text-gray-600 hover:text-gray-800 transition"
+                        onClick={() => toggleExpand(customer.id)}
+                        aria-label="詳細を展開"
+                        title="詳細を展開"
+                      >
+                        {expanded[customer.id] ? "▲" : "▼"}
+                      </button>
+                      <span>{customer.name}</span>
+                    </div>
                     <div className="flex-1 text-gray-600">開始: {customer.startTime}</div>
                     <div className="flex items-center space-x-4">
                       <Button
@@ -308,14 +318,6 @@ const Page: NextPage = () => {
                       >
                         会計
                       </Button>
-                      <button
-                        className="ml-2 text-gray-600 hover:text-gray-800 transition"
-                        onClick={() => toggleExpand(customer.id)}
-                        aria-label="詳細を展開"
-                        title="詳細を展開"
-                      >
-                        {expanded[customer.id] ? "▲" : "▼"}
-                      </button>
                     </div>
                   </div>
                   {expanded[customer.id] && (
