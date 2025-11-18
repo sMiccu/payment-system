@@ -16,6 +16,7 @@ type CustomerApiResponse = {
   total_amount: string;
   paid: boolean;
   membership: number | null;
+  is_breaking: boolean;
 };
 
 // 表示用の顧客データの型定義
@@ -23,6 +24,7 @@ type Customer = {
   id: string;
   name: string;
   startTime: string;
+  isBreaking: boolean;
 };
 
 // start_datetimeから時刻を抽出する関数
@@ -39,6 +41,33 @@ const Page: NextPage = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const toggleBreak = async (customerId: string, isBreaking: boolean) => {
+    try {
+      setError(null);
+      if (isBreaking) {
+        await apiFetch(`/customer/api/customer/${customerId}/resume/`, {
+          method: "POST",
+          body: JSON.stringify({}),
+        });
+      } else {
+        await apiFetch(`/customer/api/customer/${customerId}/pause/`, {
+          method: "POST",
+          body: JSON.stringify({}),
+        });
+      }
+      setCustomers((prev) =>
+        prev.map((c) =>
+          c.id === customerId ? { ...c, isBreaking: !isBreaking } : c
+        )
+      );
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : "不明なエラーが発生しました";
+      setError(`休止/再開の操作に失敗しました: ${errorMessage}`);
+      console.error("Failed to toggle break:", e);
+    }
+  };
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -61,6 +90,7 @@ const Page: NextPage = () => {
             id: customer.id.toString(),
             name: customer.name,
             startTime: extractTime(customer.start_datetime),
+            isBreaking: customer.is_breaking,
           })
         );
         
@@ -118,6 +148,12 @@ const Page: NextPage = () => {
                   <div className="flex-1 text-gray-600">開始: {customer.startTime}</div>
                   <div className="flex space-x-4">
                     <Button
+                      className="bg-gray-300 hover:bg-gray-400 text-black font-medium rounded-lg px-6 border border-gray-200"
+                      onClick={() => toggleBreak(customer.id, customer.isBreaking)}
+                    >
+                      {customer.isBreaking ? "再開" : "停止"}
+                    </Button>
+                    <Button
                       className="bg-green-400 hover:bg-green-500 text-black font-medium rounded-lg px-6 border border-gray-200"
                       onClick={() => router.push(`/order?customerId=${customer.id}`)}
                     >
@@ -125,6 +161,7 @@ const Page: NextPage = () => {
                     </Button>
                     <Button
                       className="bg-red-300 hover:bg-red-400 text-white font-medium rounded-lg px-6 border border-gray-200"
+                      disabled={customer.isBreaking}
                       onClick={() => router.push(`/payment?customerId=${customer.id}`)}
                     >
                       会計
