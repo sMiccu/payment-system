@@ -19,12 +19,20 @@ type CustomerApiResponse = {
   is_breaking: boolean;
 };
 
+type CustomerBreak = {
+  id: number;
+  start_datetime: string | null;
+  end_datetime: string | null;
+};
+
 // 表示用の顧客データの型定義
 type Customer = {
   id: string;
   name: string;
   startTime: string;
   isBreaking: boolean;
+  startDatetime: string | null;
+  endDatetime: string | null;
 };
 
 // start_datetimeから時刻を抽出する関数
@@ -41,6 +49,10 @@ const Page: NextPage = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [breaksMap, setBreaksMap] = useState<Record<string, CustomerBreak[]>>({});
+  const [breaksLoading, setBreaksLoading] = useState<Record<string, boolean>>({});
+  const [breaksError, setBreaksError] = useState<Record<string, string | null>>({});
 
   const toggleBreak = async (customerId: string, isBreaking: boolean) => {
     try {
@@ -69,6 +81,134 @@ const Page: NextPage = () => {
     }
   };
 
+  const toggleExpand = async (customerId: string) => {
+    const next = !expanded[customerId];
+    setExpanded((prev) => ({ ...prev, [customerId]: next }));
+    if (next && !breaksMap[customerId] && !breaksLoading[customerId]) {
+      setBreaksLoading((prev) => ({ ...prev, [customerId]: true }));
+      setBreaksError((prev) => ({ ...prev, [customerId]: null }));
+      try {
+        const items = await apiFetch<CustomerBreak[]>(
+          `/customer/api/customer_break/?customer=${customerId}`
+        );
+        setBreaksMap((prev) => ({ ...prev, [customerId]: items }));
+      } catch (e) {
+        const errorMessage =
+          e instanceof Error ? e.message : "不明なエラーが発生しました";
+        setBreaksError((prev) => ({
+          ...prev,
+          [customerId]: `休止履歴の取得に失敗しました: ${errorMessage}`,
+        }));
+      } finally {
+        setBreaksLoading((prev) => ({ ...prev, [customerId]: false }));
+      }
+    }
+  };
+
+  const formatDateTime = (datetime: string | null): string => {
+    if (!datetime) return "--/-- --:--";
+    const d = new Date(datetime);
+    const yyyy = d.getFullYear();
+    const mm = (d.getMonth() + 1).toString().padStart(2, "0");
+    const dd = d.getDate().toString().padStart(2, "0");
+    const hh = d.getHours().toString().padStart(2, "0");
+    const mi = d.getMinutes().toString().padStart(2, "0");
+    return `${yyyy}/${mm}/${dd} ${hh}:${mi}`;
+  };
+
+  const formatMs = (ms: number): string => {
+    if (ms < 0) ms = 0;
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, "0");
+    const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, "0");
+    const seconds = Math.floor(totalSeconds % 60).toString().padStart(2, "0");
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
+  const calcTotals = (customer: Customer, breaks: CustomerBreak[]) => {
+    const now = new Date();
+    const start = customer.startDatetime ? new Date(customer.startDatetime) : null;
+    const end = customer.endDatetime ? new Date(customer.endDatetime) : null;
+    let totalStopMs = 0;
+    for (const b of breaks) {
+      if (!b.start_datetime) continue;
+      const bs = new Date(b.start_datetime);
+      const be = b.end_datetime ? new Date(b.end_datetime) : now;
+      if (end && be > end) {
+        // 過剰分は切り詰め
+        totalStopMs += Math.max(0, Math.min(end.getTime(), be.getTime()) - bs.getTime());
+      } else {
+        totalStopMs += Math.max(0, be.getTime() - bs.getTime());
+      }
+    }
+    let totalPlayMs = 0;
+    if (start) {
+      const playEnd = end ?? now;
+      totalPlayMs = Math.max(0, playEnd.getTime() - start.getTime() - totalStopMs);
+    }
+    return { totalPlayMs, totalStopMs };
+  };
+  
+  type PlaySegment = {
+    leftLabel: "開始" | "再開";
+    left: Date;
+    rightLabel: "停止" | "現在" | "会計";
+    right: Date;
+  };
+  
+  const getPlaySegments = (customer: Customer, breaks: CustomerBreak[]): PlaySegment[] => {
+    const segments: PlaySegment[] = [];
+    if (!customer.startDatetime) return segments;
+    const startAt = new Date(customer.startDatetime);
+    const endAt = customer.endDatetime ? new Date(customer.endDatetime) : null;
+    const sorted = [...breaks].filter(b => !!b.start_datetime).sort((a, b) => {
+      return new Date(a.start_datetime as string).getTime() - new Date(b.start_datetime as string).getTime();
+    });
+    let currentStart: Date | null = startAt;
+    for (let i = 0; i < sorted.length; i++) {
+      const b = sorted[i];
+      const breakStart = new Date(b.start_datetime as string);
+      if (endAt && breakStart.getTime() >= endAt.getTime()) {
+        // 会計が先に来る場合、ここで終了
+        if (currentStart) {
+          segments.push({
+            leftLabel: segments.length === 0 ? "開始" : "再開",
+            left: currentStart,
+            rightLabel: "会計",
+            right: endAt,
+          });
+        }
+        return segments;
+      }
+      if (currentStart && breakStart.getTime() > currentStart.getTime()) {
+        segments.push({
+          leftLabel: segments.length === 0 ? "開始" : "再開",
+          left: currentStart,
+          rightLabel: "停止",
+          right: breakStart,
+        });
+      }
+      // 次のプレイ開始はこのブレークの終了（再開時刻）
+      if (b.end_datetime) {
+        currentStart = new Date(b.end_datetime);
+      } else {
+        // 休止中なので次のプレイ開始は未定
+        currentStart = null;
+      }
+    }
+    // ループ後、まだプレイ継続の区間があれば追加
+    if (currentStart) {
+      const right = endAt ?? new Date();
+      segments.push({
+        leftLabel: segments.length === 0 ? "開始" : "再開",
+        left: currentStart,
+        rightLabel: endAt ? "会計" : "現在",
+        right,
+      });
+    }
+    return segments;
+  };
+
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -91,6 +231,8 @@ const Page: NextPage = () => {
             name: customer.name,
             startTime: extractTime(customer.start_datetime),
             isBreaking: customer.is_breaking,
+            startDatetime: customer.start_datetime,
+            endDatetime: customer.end_datetime,
           })
         );
         
@@ -140,33 +282,88 @@ const Page: NextPage = () => {
               </div>
             ) : (
               customers.map((customer) => (
-                <div
-                  key={customer.id}
-                  className="bg-gray-100 rounded-lg p-4 flex items-center justify-between shadow-sm mb-3"
-                >
-                  <div className="flex-1 font-medium text-gray-800">{customer.name}</div>
-                  <div className="flex-1 text-gray-600">開始: {customer.startTime}</div>
-                  <div className="flex space-x-4">
-                    <Button
-                      className="bg-gray-300 hover:bg-gray-400 text-black font-medium rounded-lg px-6 border border-gray-200"
-                      onClick={() => toggleBreak(customer.id, customer.isBreaking)}
-                    >
-                      {customer.isBreaking ? "再開" : "停止"}
-                    </Button>
-                    <Button
-                      className="bg-green-400 hover:bg-green-500 text-black font-medium rounded-lg px-6 border border-gray-200"
-                      onClick={() => router.push(`/order?customerId=${customer.id}`)}
-                    >
-                      注文
-                    </Button>
-                    <Button
-                      className="bg-red-300 hover:bg-red-400 text-white font-medium rounded-lg px-6 border border-gray-200"
-                      disabled={customer.isBreaking}
-                      onClick={() => router.push(`/payment?customerId=${customer.id}`)}
-                    >
-                      会計
-                    </Button>
+                <div key={customer.id}>
+                  <div
+                    className="bg-gray-100 rounded-lg p-4 flex items-center justify-between shadow-sm mb-3"
+                  >
+                    <div className="flex-1 font-medium text-gray-800">{customer.name}</div>
+                    <div className="flex-1 text-gray-600">開始: {customer.startTime}</div>
+                    <div className="flex items-center space-x-4">
+                      <Button
+                        className="bg-gray-300 hover:bg-gray-400 text-black font-medium rounded-lg px-6 border border-gray-200"
+                        onClick={() => toggleBreak(customer.id, customer.isBreaking)}
+                      >
+                        {customer.isBreaking ? "再開" : "停止"}
+                      </Button>
+                      <Button
+                        className="bg-green-400 hover:bg-green-500 text-black font-medium rounded-lg px-6 border border-gray-200"
+                        onClick={() => router.push(`/order?customerId=${customer.id}`)}
+                      >
+                        注文
+                      </Button>
+                      <Button
+                        className="bg-red-300 hover:bg-red-400 text-white font-medium rounded-lg px-6 border border-gray-200"
+                        disabled={!customer.isBreaking}
+                        onClick={() => router.push(`/payment?customerId=${customer.id}`)}
+                      >
+                        会計
+                      </Button>
+                      <button
+                        className="ml-2 text-gray-600 hover:text-gray-800 transition"
+                        onClick={() => toggleExpand(customer.id)}
+                        aria-label="詳細を展開"
+                        title="詳細を展開"
+                      >
+                        {expanded[customer.id] ? "▲" : "▼"}
+                      </button>
+                    </div>
                   </div>
+                  {expanded[customer.id] && (
+                    <div className="bg-white rounded-md p-4 border border-gray-200 mb-3">
+                      {breaksLoading[customer.id] ? (
+                        <div className="text-gray-600">履歴を読み込み中...</div>
+                      ) : breaksError[customer.id] ? (
+                        <div className="text-red-600">{breaksError[customer.id]}</div>
+                      ) : (
+                        <>
+                          <div className="mb-3">
+                            <div className="font-semibold text-gray-800 mb-2">履歴</div>
+                          <ul className="list-disc list-inside text-gray-700 space-y-1">
+                            {getPlaySegments(customer, breaksMap[customer.id] ?? []).map((seg, idx) => (
+                              <li key={idx}>
+                                {seg.leftLabel}: {formatDateTime(seg.left.toISOString())} 〜 {seg.rightLabel}: {formatDateTime(seg.right.toISOString())}
+                              </li>
+                            ))}
+                          </ul>
+                          </div>
+                          <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="p-3 bg-gray-50 rounded border">
+                              <div className="text-sm text-gray-500">総プレイ時間</div>
+                              <div className="text-lg font-semibold text-gray-800">
+                                {formatMs(
+                                  calcTotals(
+                                    customer,
+                                    breaksMap[customer.id] ?? []
+                                  ).totalPlayMs
+                                )}
+                              </div>
+                            </div>
+                            <div className="p-3 bg-gray-50 rounded border">
+                              <div className="text-sm text-gray-500">総停止時間</div>
+                              <div className="text-lg font-semibold text-gray-800">
+                                {formatMs(
+                                  calcTotals(
+                                    customer,
+                                    breaksMap[customer.id] ?? []
+                                  ).totalStopMs
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))
             )}

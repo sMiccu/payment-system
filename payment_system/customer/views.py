@@ -55,7 +55,11 @@ class CustomerBreakViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if not user.is_authenticated:
             return CustomerBreak.objects.none()
-        return CustomerBreak.objects.filter(customer__store=user.store)
+        queryset = CustomerBreak.objects.filter(customer__store=user.store)
+        customer_id = self.request.query_params.get('customer')
+        if customer_id:
+            queryset = queryset.filter(customer_id=customer_id)
+        return queryset.order_by('start_datetime')
 
 class MembershipViewSet(viewsets.ModelViewSet):
     serializer_class = MembershipSerializer
