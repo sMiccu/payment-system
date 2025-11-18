@@ -3,6 +3,7 @@ attrs==25.3.0
 Django==5.2.7
 django-cors-headers==4.9.0
 django-extensions==4.1
+django-phonenumber-field==8.3.0
 django-rest-framework==0.1.0
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
@@ -11,6 +12,7 @@ inflection==0.5.1
 jsonschema==4.25.0
 jsonschema-specifications==2025.4.1
 mysqlclient==2.2.7
+phonenumbers==9.0.18
 pygraphviz==1.14
 PyJWT==2.10.1
 PyYAML==6.0.2
