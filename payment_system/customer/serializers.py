@@ -3,9 +3,15 @@ from rest_framework import serializers
 from .models import Customer, CustomerBreak, Membership
 
 class CustomerSerializer(serializers.ModelSerializer):
+    is_breaking = serializers.SerializerMethodField()
+    
     class Meta:
         model = Customer
-        fields = ['id', 'name', 'membership', 'start_datetime', 'end_datetime', 'total_amount', 'paid']
+        fields = ['id', 'name', 'store', 'membership', 'start_datetime', 'end_datetime', 'total_amount', 'paid', 'is_breaking']
+        read_only_fields = ['store']
+    
+    def get_is_breaking(self, obj):
+        return CustomerBreak.objects.filter(customer=obj, end_datetime__isnull=True).exists()
 
 class CustomerBreakSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,4 +21,5 @@ class CustomerBreakSerializer(serializers.ModelSerializer):
 class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Membership
-        fields = ['id', 'first_name', 'last_name']
+        fields = ['id', 'store', 'first_name', 'last_name', 'first_name_kana', 'last_name_kana', 'phone_number']
+        read_only_fields = ['store']
