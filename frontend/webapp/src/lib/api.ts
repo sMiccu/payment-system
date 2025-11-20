@@ -24,3 +24,27 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}) {
   if (!res.ok) throw new Error(await res.text());
   return res.json() as Promise<T>;
 }
+
+export type QuoteBreakdownRow = {
+  minutes: string;       // Decimal 文字列
+  count: number;
+  unit_price: string;    // Decimal 文字列
+  line_total: string;    // Decimal 文字列
+};
+
+export type CustomerQuoteResponse = {
+  played_minutes: string; // Decimal 文字列
+  subtotal: string;       // Decimal 文字列
+  breakdown: QuoteBreakdownRow[];
+};
+
+export async function fetchCustomerQuote(customerId: string, params?: { start_dt?: string; end_dt?: string; }): Promise<CustomerQuoteResponse> {
+  const search = new URLSearchParams();
+  if (params?.start_dt) search.set('start_dt', params.start_dt);
+  if (params?.end_dt) search.set('end_dt', params.end_dt);
+  const query = search.toString();
+  const path = query
+    ? `customer/api/customer/${encodeURIComponent(customerId)}/quote/?${query}`
+    : `customer/api/customer/${encodeURIComponent(customerId)}/quote/`;
+  return apiFetch<CustomerQuoteResponse>(path);
+}
