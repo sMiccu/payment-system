@@ -35,6 +35,11 @@ export function AppSidebar() {
               会員登録
             </Link>
           </SidebarGroup>
+          <SidebarGroup>
+            <Link href="/menu-regist" className="block py-1 px-2 hover:bg-gray-100 rounded">
+              メニュー登録
+            </Link>
+          </SidebarGroup>
         </SidebarContent>
       </Sidebar>
     </SidebarProvider>

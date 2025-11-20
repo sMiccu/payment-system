@@ -338,30 +338,32 @@ const Page: NextPage = () => {
                             ))}
                           </ul>
                           </div>
-                          <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div className="p-3 bg-gray-50 rounded border">
-                              <div className="text-sm text-gray-500">総プレイ時間</div>
-                              <div className="text-lg font-semibold text-gray-800">
-                                {formatMs(
-                                  calcTotals(
-                                    customer,
-                                    breaksMap[customer.id] ?? []
-                                  ).totalPlayMs
-                                )}
+                          {(() => {
+                            const totals = calcTotals(customer, breaksMap[customer.id] ?? []);
+                            const stayMs = totals.totalPlayMs + totals.totalStopMs;
+                            return (
+                              <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div className="p-3 bg-gray-50 rounded border">
+                                  <div className="text-sm text-gray-500">滞在時間</div>
+                                  <div className="text-lg font-semibold text-gray-800">
+                                    {formatMs(stayMs)}
+                                  </div>
+                                </div>
+                                <div className="p-3 bg-gray-50 rounded border">
+                                  <div className="text-sm text-gray-500">総プレイ時間</div>
+                                  <div className="text-lg font-semibold text-gray-800">
+                                    {formatMs(totals.totalPlayMs)}
+                                  </div>
+                                </div>
+                                <div className="p-3 bg-gray-50 rounded border">
+                                  <div className="text-sm text-gray-500">総停止時間</div>
+                                  <div className="text-lg font-semibold text-gray-800">
+                                    {formatMs(totals.totalStopMs)}
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                            <div className="p-3 bg-gray-50 rounded border">
-                              <div className="text-sm text-gray-500">総停止時間</div>
-                              <div className="text-lg font-semibold text-gray-800">
-                                {formatMs(
-                                  calcTotals(
-                                    customer,
-                                    breaksMap[customer.id] ?? []
-                                  ).totalStopMs
-                                )}
-                              </div>
-                            </div>
-                          </div>
+                            );
+                          })()}
                         </>
                       )}
                     </div>
