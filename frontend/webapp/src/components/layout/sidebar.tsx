@@ -36,8 +36,13 @@ export function AppSidebar() {
             </Link>
           </SidebarGroup>
           <SidebarGroup>
-            <Link href="/menu-regist" className="block py-1 px-2 hover:bg-gray-100 rounded">
-              メニュー登録
+            <Link href="/menu-admin" className="block py-1 px-2 hover:bg-gray-100 rounded">
+              メニュー管理
+            </Link>
+          </SidebarGroup>
+          <SidebarGroup>
+            <Link href="/category-admin" className="block py-1 px-2 hover:bg-gray-100 rounded">
+              カテゴリー管理
             </Link>
           </SidebarGroup>
         </SidebarContent>
