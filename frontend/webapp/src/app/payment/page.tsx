@@ -5,17 +5,20 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppSidebar } from "../../components/layout/sidebar";
 import { Button } from "@/components/ui/button";
-import { fetchCustomerQuote, type CustomerQuoteResponse } from "@/lib/api";
+import { fetchCustomerQuote, type CustomerQuoteResponse, fetchCustomerPaymentSummary, type PaymentSummaryResponse, payCustomer, type PaymentMethod } from "@/lib/api";
 
 const PaymentContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const customerId = searchParams.get("customerId");
   const [data, setData] = useState<CustomerQuoteResponse | null>(null);
+  const [orderSummary, setOrderSummary] = useState<PaymentSummaryResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [startDt, setStartDt] = useState<string>("");
   const [endDt, setEndDt] = useState<string>("");
+  const [payMethod, setPayMethod] = useState<PaymentMethod | null>(null);
+  const [paying, setPaying] = useState(false);
 
   const fetchQuote = useCallback(async () => {
     if (!customerId) return;
@@ -27,16 +30,29 @@ const PaymentContent = () => {
         end_dt: endDt || undefined,
       });
       setData(res);
-    } catch (e: any) {
-      setError(e?.message ?? "見積取得に失敗しました");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "見積取得に失敗しました";
+      setError(msg);
     } finally {
       setLoading(false);
     }
   }, [customerId, startDt, endDt]);
 
+  const fetchOrders = useCallback(async () => {
+    if (!customerId) return;
+    try {
+      const res = await fetchCustomerPaymentSummary(customerId);
+      setOrderSummary(res);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "注文内訳の取得に失敗しました";
+      setError(msg);
+    }
+  }, [customerId]);
+
   useEffect(() => {
     fetchQuote();
-  }, [fetchQuote]);
+    fetchOrders();
+  }, [fetchQuote, fetchOrders]);
 
   const formatCurrency = useCallback((s: string) => {
     const n = Number(s);
@@ -50,6 +66,32 @@ const PaymentContent = () => {
     // 少数分がある場合は最大2桁表示
     return `${n.toLocaleString("ja-JP", { maximumFractionDigits: 2 })}分`;
   }, []);
+
+  const toNumber = (s?: string | null) => {
+    if (!s) return 0;
+    const n = Number(s);
+    return Number.isNaN(n) ? 0 : n;
+  };
+  const grandTotal = useMemo(() => {
+    const quoteSubtotal = toNumber(data?.subtotal ?? "0");
+    const orderTotal = toNumber(orderSummary?.order_total ?? "0");
+    return quoteSubtotal + orderTotal;
+  }, [data, orderSummary]);
+
+  const onPay = useCallback(async () => {
+    if (!customerId || !payMethod) return;
+    setPaying(true);
+    setError(null);
+    try {
+      await payCustomer({ customer_id: Number(customerId), payment_method: payMethod });
+      router.push("/top");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "会計処理に失敗しました";
+      setError(msg);
+    } finally {
+      setPaying(false);
+    }
+  }, [customerId, payMethod, router]);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -110,7 +152,39 @@ const PaymentContent = () => {
                   </div>
 
                   <div className="bg-white border rounded p-4">
-                    <h2 className="text-lg font-medium mb-2">料金内訳</h2>
+                    <h2 className="text-lg font-medium mb-2">注文内訳</h2>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-gray-600 border-b">
+                            <th className="py-2 pr-4">商品</th>
+                            <th className="py-2 pr-4">数量</th>
+                            <th className="py-2 pr-4">小計</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {orderSummary?.items.map((row) => (
+                            <tr key={row.menu_id} className="border-b last:border-b-0">
+                              <td className="py-2 pr-4">{row.menu_name}</td>
+                              <td className="py-2 pr-4">{row.quantity}</td>
+                              <td className="py-2 pr-4 font-medium">{formatCurrency(row.line_total)}</td>
+                            </tr>
+                          ))}
+                          {(orderSummary?.items.length ?? 0) === 0 && (
+                            <tr>
+                              <td className="py-3 text-gray-500" colSpan={3}>注文はありません</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="mt-3 text-right text-sm text-gray-700">
+                      注文小計: <span className="font-medium">{formatCurrency(orderSummary?.order_total ?? "0")}</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border rounded p-4">
+                    <h2 className="text-lg font-medium mb-2">時間料金内訳</h2>
                     <div className="overflow-x-auto">
                       <table className="min-w-full text-sm">
                         <thead>
@@ -138,6 +212,38 @@ const PaymentContent = () => {
                         </tbody>
                       </table>
                     </div>
+                  </div>
+
+                  <div className="bg-white border rounded p-4">
+                    <h2 className="text-lg font-medium mb-2">会計</h2>
+                    <div className="flex items-center gap-6">
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="radio"
+                          name="payment_method"
+                          value="cash"
+                          checked={payMethod === "cash"}
+                          onChange={() => setPayMethod("cash")}
+                        />
+                        現金
+                      </label>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="radio"
+                          name="payment_method"
+                          value="paypay"
+                          checked={payMethod === "paypay"}
+                          onChange={() => setPayMethod("paypay")}
+                        />
+                        PayPay
+                      </label>
+                      <div className="ml-auto text-lg">
+                        合計: <span className="font-semibold">{formatCurrency(String(grandTotal))}</span>
+                      </div>
+                    </div>
+                    <Button className="mt-4" disabled={!payMethod || paying} onClick={onPay}>
+                      {paying ? "会計処理中..." : "会計"}
+                    </Button>
                   </div>
                 </div>
               )}
