@@ -133,6 +133,11 @@ export default function CategoryAdminPage() {
                 <div className="text-sm text-gray-600">カテゴリがありません。</div>
               )}
               {!isLoadingCategories && categories.length > 0 && (
+                <>
+                <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
+                  <span className="flex-1">カテゴリー名</span>
+                  <span className="flex-1" />
+                </div>
                 <ul className="flex flex-col gap-2">
                   {categories.map((c) => (
                     <li key={c.id} className="flex items-center gap-2">
@@ -175,6 +180,7 @@ export default function CategoryAdminPage() {
                     </li>
                   ))}
                 </ul>
+                </>
               )}
             </div>
           </details>
