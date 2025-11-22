@@ -17,6 +17,7 @@ class DurationRateSerializer(serializers.ModelSerializer):
     class Meta:
         model = DurationRate
         fields = ['id', 'store', 'minutes', 'membership_price', 'general_price']
+        read_only_fields = ['id', 'store']
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
