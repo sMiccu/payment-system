@@ -29,10 +29,10 @@ export function AppSidebar() {
                 <Link 
                   key={item.href}
                   href={item.href} 
-                  className="flex items-center gap-3 py-3 px-4 hover:bg-sidebar-accent rounded-lg transition-all group"
+                  className="flex items-center gap-3 py-3 px-4 hover:bg-sidebar-accent rounded-lg transition-all duration-300 group hover:translate-x-1"
                 >
-                  <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  <span className="text-sm font-medium text-sidebar-foreground group-hover:text-primary transition-colors">
+                  <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all duration-300 group-hover:scale-110 group-hover:rotate-3" />
+                  <span className="text-sm font-medium text-sidebar-foreground group-hover:text-primary transition-colors duration-300">
                     {item.label}
                   </span>
                 </Link>

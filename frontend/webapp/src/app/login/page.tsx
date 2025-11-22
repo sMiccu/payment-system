@@ -69,13 +69,13 @@ const Page: NextPage = () => {
     >
       {/* Background glow effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-[120px]" />
+        <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse-glow" />
+        <div className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-[120px] animate-pulse-glow animation-delay-500" />
       </div>
       
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="relative z-10">
-          <Card className="w-[400px] glow-card border-border/50 bg-card/80 backdrop-blur-xl">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="relative z-10 animate-slide-in-up">
+          <Card className="w-[400px] glow-card border-border/50 bg-card/80 backdrop-blur-xl hover:border-primary/30 transition-all duration-500">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 ログイン
@@ -121,8 +121,8 @@ const Page: NextPage = () => {
               />
             </CardContent>
             <CardFooter className="flex flex-col space-y-2">
-              {error && <p className="text-destructive text-sm truncate">{error}</p>}
-              <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity">
+              {error && <p className="text-destructive text-sm truncate animate-fade-in">{error}</p>}
+              <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/50 animate-pulse-glow">
                 ログイン
               </Button>
             </CardFooter>

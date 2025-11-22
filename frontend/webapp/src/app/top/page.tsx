@@ -258,9 +258,9 @@ const Page: NextPage = () => {
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
           {/* 来店登録ボタン */}
-          <div className="mb-8">
+          <div className="mb-8 animate-slide-in-up">
             <Button
-              className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-medium text-base px-8 py-6 h-auto"
+              className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 hover:scale-105 text-white font-medium text-base px-8 py-6 h-auto transition-all duration-300 shadow-lg hover:shadow-primary/50"
               size="lg"
               onClick={() => router.push("/customer-register")}
             >
@@ -270,28 +270,47 @@ const Page: NextPage = () => {
 
           {/* 顧客リスト */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4 text-foreground">来店中のお客様</h2>
+            <h2 className="text-xl font-semibold mb-4 text-foreground animate-slide-in-left">来店中のお客様</h2>
             {isLoading ? (
-              <div className="text-center py-8 text-muted-foreground">
-                読み込み中...
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className="h-20 surface-elevated rounded-lg border border-border/50 animate-pulse"
+                  >
+                    <div className="h-full p-4 flex items-center gap-4">
+                      <div className="h-4 bg-muted/30 rounded w-1/4 animate-shimmer"></div>
+                      <div className="h-4 bg-muted/30 rounded w-1/4 animate-shimmer"></div>
+                      <div className="ml-auto flex gap-2">
+                        <div className="h-8 w-16 bg-muted/30 rounded"></div>
+                        <div className="h-8 w-16 bg-muted/30 rounded"></div>
+                        <div className="h-8 w-16 bg-muted/30 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : error ? (
-              <div className="text-center py-8 text-destructive">
+              <div className="text-center py-8 text-destructive animate-fade-in">
                 {error}
               </div>
             ) : customers.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-8 text-muted-foreground animate-fade-in">
                 来店中の顧客はいません
               </div>
             ) : (
-              customers.map((customer) => (
-                <div key={customer.id}>
+              customers.map((customer, index) => (
+                <div 
+                  key={customer.id} 
+                  className="animate-slide-in-up"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
                   <div
-                    className="surface-elevated rounded-lg p-4 flex items-center justify-between border border-border/50 hover:border-primary/30 transition-all mb-3"
+                    className="surface-elevated rounded-lg p-4 flex items-center justify-between border border-border/50 hover:border-primary/50 transition-all duration-300 mb-3 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5 group"
                   >
                     <div className="flex-1 flex items-center font-medium text-foreground gap-3">
                       <button
-                        className="text-muted-foreground hover:text-foreground transition"
+                        className="text-muted-foreground hover:text-primary transition-colors duration-200 hover:scale-110 transform"
                         onClick={() => toggleExpand(customer.id)}
                         aria-label="詳細を展開"
                         title="詳細を展開"
@@ -299,19 +318,19 @@ const Page: NextPage = () => {
                         {expanded[customer.id] ? "▲" : "▼"}
                       </button>
                       {customer.isMember && (
-                        <Star className="w-4 h-4 fill-primary text-primary" />
+                        <Star className="w-4 h-4 fill-primary text-primary animate-pulse" />
                       )}
-                      <span>{customer.name}</span>
+                      <span className="group-hover:text-primary transition-colors duration-200">{customer.name}</span>
                     </div>
                     <div className="flex-1 flex items-center gap-2 text-muted-foreground">
                       {customer.isBreaking ? (
-                        <span className="flex items-center gap-1 text-orange-400">
+                        <span className="flex items-center gap-1 text-orange-400 animate-pulse">
                           <Pause className="w-4 h-4" />
                           休憩中
                         </span>
                       ) : (
                         <span className="flex items-center gap-1 text-green-400">
-                          <Play className="w-4 h-4" />
+                          <Play className="w-4 h-4 animate-pulse" />
                           プレイ中
                         </span>
                       )}
@@ -320,20 +339,20 @@ const Page: NextPage = () => {
                     <div className="flex items-center space-x-4">
                       <Button
                         variant="secondary"
-                        className="font-medium rounded-lg px-6"
+                        className="font-medium rounded-lg px-6 hover:scale-105 transition-transform duration-200"
                         onClick={() => toggleBreak(customer.id, customer.isBreaking)}
                       >
                         {customer.isBreaking ? "再開" : "停止"}
                       </Button>
                       <Button
-                        className="bg-[var(--success)] hover:bg-[var(--success)]/90 text-white font-medium rounded-lg px-6"
+                        className="bg-[var(--success)] hover:bg-[var(--success)]/90 text-white font-medium rounded-lg px-6 hover:scale-105 transition-transform duration-200 hover:shadow-lg hover:shadow-green-500/30"
                         onClick={() => router.push(`/order?customerId=${customer.id}`)}
                       >
                         注文
                       </Button>
                       <Button
                         variant="destructive"
-                        className="font-medium rounded-lg px-6"
+                        className="font-medium rounded-lg px-6 hover:scale-105 transition-transform duration-200 hover:shadow-lg hover:shadow-red-500/30"
                         disabled={!customer.isBreaking}
                         onClick={() => router.push(`/payment?customerId=${customer.id}`)}
                       >
@@ -342,18 +361,18 @@ const Page: NextPage = () => {
                     </div>
                   </div>
                   {expanded[customer.id] && (
-                    <div className="bg-card/50 rounded-md p-4 border border-border/50 mb-3 backdrop-blur-sm">
+                    <div className="bg-card/50 rounded-md p-4 border border-border/50 mb-3 backdrop-blur-sm animate-slide-in-up overflow-hidden">
                       {breaksLoading[customer.id] ? (
-                        <div className="text-muted-foreground">履歴を読み込み中...</div>
+                        <div className="text-muted-foreground animate-pulse">履歴を読み込み中...</div>
                       ) : breaksError[customer.id] ? (
-                        <div className="text-destructive">{breaksError[customer.id]}</div>
+                        <div className="text-destructive animate-fade-in">{breaksError[customer.id]}</div>
                       ) : (
                         <>
-                          <div className="mb-3">
+                          <div className="mb-3 animate-fade-in">
                             <div className="font-semibold text-foreground mb-2">履歴</div>
                           <ul className="list-disc list-inside text-muted-foreground space-y-1">
                             {getPlaySegments(customer, breaksMap[customer.id] ?? []).map((seg, idx) => (
-                              <li key={idx}>
+                              <li key={idx} className="animate-slide-in-left" style={{ animationDelay: `${idx * 50}ms` }}>
                                 {seg.leftLabel}: {formatDateTime(seg.left.toISOString())} 〜 {seg.rightLabel}: {formatDateTime(seg.right.toISOString())}
                               </li>
                             ))}
@@ -364,19 +383,19 @@ const Page: NextPage = () => {
                             const stayMs = totals.totalPlayMs + totals.totalStopMs;
                             return (
                               <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <div className="p-3 bg-muted/30 rounded border border-border/30">
+                                <div className="p-3 bg-muted/30 rounded border border-border/30 hover:border-primary/30 transition-all duration-300 hover:scale-105 animate-slide-in-up animation-delay-100">
                                   <div className="text-sm text-muted-foreground">滞在時間</div>
                                   <div className="text-lg font-semibold text-foreground">
                                     {formatMs(stayMs)}
                                   </div>
                                 </div>
-                                <div className="p-3 bg-muted/30 rounded border border-border/30">
+                                <div className="p-3 bg-muted/30 rounded border border-border/30 hover:border-primary/30 transition-all duration-300 hover:scale-105 animate-slide-in-up animation-delay-200">
                                   <div className="text-sm text-muted-foreground">総プレイ時間</div>
                                   <div className="text-lg font-semibold text-foreground">
                                     {formatMs(totals.totalPlayMs)}
                                   </div>
                                 </div>
-                                <div className="p-3 bg-muted/30 rounded border border-border/30">
+                                <div className="p-3 bg-muted/30 rounded border border-border/30 hover:border-primary/30 transition-all duration-300 hover:scale-105 animate-slide-in-up animation-delay-300">
                                   <div className="text-sm text-muted-foreground">総停止時間</div>
                                   <div className="text-lg font-semibold text-foreground">
                                     {formatMs(totals.totalStopMs)}
