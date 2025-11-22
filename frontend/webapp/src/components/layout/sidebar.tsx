@@ -3,7 +3,6 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarProvider,
@@ -43,6 +42,11 @@ export function AppSidebar() {
           <SidebarGroup>
             <Link href="/category-admin" className="block py-1 px-2 hover:bg-gray-100 rounded">
               カテゴリー管理
+            </Link>
+          </SidebarGroup>
+          <SidebarGroup>
+            <Link href="/duration-rate-register" className="block py-1 px-2 hover:bg-gray-100 rounded">
+              時間料金登録
             </Link>
           </SidebarGroup>
         </SidebarContent>
