@@ -126,7 +126,7 @@ export default function CategoryAdminPage() {
           </form>
 
           <details className="mt-8">
-            <summary className="cursor-pointer select-none text-base font-medium">カテゴリ管理</summary>
+            <summary className="cursor-pointer select-none text-base font-medium">カテゴリー一覧</summary>
             <div className="mt-3 flex flex-col gap-2">
               {isLoadingCategories && <div className="text-sm text-gray-600">読み込み中...</div>}
               {!isLoadingCategories && categories.length === 0 && (

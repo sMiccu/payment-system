@@ -7,6 +7,8 @@ import { AppSidebar } from "../../components/layout/sidebar";
 import { Button } from "@/components/ui/button";
 import { fetchCustomerQuote, type CustomerQuoteResponse, fetchCustomerPaymentSummary, type PaymentSummaryResponse, payCustomer, type PaymentMethod } from "@/lib/api";
 
+const TAX_RATE = 0.1;
+
 const PaymentContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -77,6 +79,14 @@ const PaymentContent = () => {
     const orderTotal = toNumber(orderSummary?.order_total ?? "0");
     return quoteSubtotal + orderTotal;
   }, [data, orderSummary]);
+
+  const taxAmount = useMemo(() => {
+    return Math.floor(grandTotal * TAX_RATE);
+  }, [grandTotal]);
+
+  const totalInclTax = useMemo(() => {
+    return grandTotal + taxAmount;
+  }, [grandTotal, taxAmount]);
 
   const onPay = useCallback(async () => {
     if (!customerId || !payMethod) return;
@@ -239,6 +249,14 @@ const PaymentContent = () => {
                       </label>
                       <div className="ml-auto text-lg">
                         合計: <span className="font-semibold">{formatCurrency(String(grandTotal))}</span>
+                      </div>
+                    </div>
+                    <div className="mt-2 text-right space-y-0.5">
+                      <div className="text-sm text-gray-700">
+                        消費税（10%）: <span className="font-medium">{formatCurrency(String(taxAmount))}</span>
+                      </div>
+                      <div className="text-lg">
+                        税込金額: <span className="font-semibold">{formatCurrency(String(totalInclTax))}</span>
                       </div>
                     </div>
                     <Button className="mt-4" disabled={!payMethod || paying} onClick={onPay}>
