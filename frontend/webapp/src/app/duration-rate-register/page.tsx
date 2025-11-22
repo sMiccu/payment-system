@@ -76,14 +76,14 @@ export default function DurationRateRegisterPage() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       <AppSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-md mx-auto">
-          <h1 className="text-xl font-semibold mb-4">時間料金登録画面</h1>
+          <h1 className="text-xl font-semibold mb-4 text-foreground">時間料金管理</h1>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <div>
-              <label className="block text-sm text-gray-700 mb-1">経過時間（分）</label>
+              <label className="block text-sm text-muted-foreground mb-1">経過時間（分）</label>
               <Controller
                 name="minutes"
                 control={control}
@@ -94,7 +94,7 @@ export default function DurationRateRegisterPage() {
                       step="1"
                       min="0"
                       inputMode="numeric"
-                      className="border p-2 w-full"
+                      className="border border-border/50 bg-input/50 text-foreground p-2 w-full rounded"
                       name={field.name}
                       onBlur={field.onBlur}
                       ref={field.ref}
@@ -111,7 +111,7 @@ export default function DurationRateRegisterPage() {
                       placeholder="例: 30"
                     />
                     {fieldState.error && (
-                      <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>
+                      <p className="text-sm text-destructive mt-1">{fieldState.error.message}</p>
                     )}
                   </>
                 )}
@@ -119,7 +119,7 @@ export default function DurationRateRegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-700 mb-1">会員価格（税抜）</label>
+              <label className="block text-sm text-muted-foreground mb-1">会員価格（税抜）</label>
               <Controller
                 name="membership_price"
                 control={control}
@@ -130,7 +130,7 @@ export default function DurationRateRegisterPage() {
                       step="1"
                       min="0"
                       inputMode="numeric"
-                      className="border p-2 w-full"
+                      className="border border-border/50 bg-input/50 text-foreground p-2 w-full rounded"
                       name={field.name}
                       onBlur={field.onBlur}
                       ref={field.ref}
@@ -147,7 +147,7 @@ export default function DurationRateRegisterPage() {
                       placeholder="例: 500"
                     />
                     {fieldState.error && (
-                      <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>
+                      <p className="text-sm text-destructive mt-1">{fieldState.error.message}</p>
                     )}
                   </>
                 )}
@@ -155,7 +155,7 @@ export default function DurationRateRegisterPage() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-700 mb-1">非会員価格（税抜）</label>
+              <label className="block text-sm text-muted-foreground mb-1">非会員価格（税抜）</label>
               <Controller
                 name="general_price"
                 control={control}
@@ -166,7 +166,7 @@ export default function DurationRateRegisterPage() {
                       step="1"
                       min="0"
                       inputMode="numeric"
-                      className="border p-2 w-full"
+                      className="border border-border/50 bg-input/50 text-foreground p-2 w-full rounded"
                       name={field.name}
                       onBlur={field.onBlur}
                       ref={field.ref}
@@ -183,7 +183,7 @@ export default function DurationRateRegisterPage() {
                       placeholder="例: 700"
                     />
                     {fieldState.error && (
-                      <p className="text-sm text-red-600 mt-1">{fieldState.error.message}</p>
+                      <p className="text-sm text-destructive mt-1">{fieldState.error.message}</p>
                     )}
                   </>
                 )}
@@ -193,20 +193,20 @@ export default function DurationRateRegisterPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="bg-blue-600 text-white p-2 rounded disabled:opacity-60"
+              className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white p-2 rounded disabled:opacity-60"
             >
               {submitting ? "登録中..." : "登録"}
             </button>
-            {error && <div className="text-sm text-red-700">{error}</div>}
+            {error && <div className="text-sm text-destructive">{error}</div>}
           </form>
           <details className="mt-8">
-            <summary className="cursor-pointer select-none text-base font-medium">時間料金一覧</summary>
+            <summary className="cursor-pointer select-none text-base font-medium text-foreground">時間料金一覧</summary>
             <div className="mt-3 flex flex-col gap-2">
-              {loadingRates && <div className="text-sm text-gray-600">読み込み中...</div>}
-              {!loadingRates && rates.length === 0 && <div className="text-sm text-gray-600">データがありません。</div>}
+              {loadingRates && <div className="text-sm text-muted-foreground">読み込み中...</div>}
+              {!loadingRates && rates.length === 0 && <div className="text-sm text-muted-foreground">データがありません。</div>}
               {!loadingRates && rates.length > 0 && (
                 <>
-                <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
                   <span className="w-24 text-right">経過時間</span>
                   <span className="w-28 text-right">会員価格</span>
                   <span className="w-28 text-right">非会員価格</span>
@@ -218,7 +218,7 @@ export default function DurationRateRegisterPage() {
                       {editId === r.id ? (
                         <>
                           <input
-                            className="border p-1 w-24"
+                            className="border border-border/50 bg-input/50 text-foreground p-1 w-24 rounded"
                             type="number"
                             step="1"
                             min="0"
@@ -236,7 +236,7 @@ export default function DurationRateRegisterPage() {
                             placeholder="分"
                           />
                           <input
-                            className="border p-1 w-28"
+                            className="border border-border/50 bg-input/50 text-foreground p-1 w-28 rounded"
                             type="number"
                             step="1"
                             min="0"
@@ -254,7 +254,7 @@ export default function DurationRateRegisterPage() {
                             placeholder="会員"
                           />
                           <input
-                            className="border p-1 w-28"
+                            className="border border-border/50 bg-input/50 text-foreground p-1 w-28 rounded"
                             type="number"
                             step="1"
                             min="0"
@@ -298,7 +298,7 @@ export default function DurationRateRegisterPage() {
                                 alert(e)
                               }
                             }}
-                            className="px-2 py-1 bg-blue-500 text-white rounded"
+                            className="px-2 py-1 bg-primary hover:bg-primary/90 text-white rounded"
                           >
                             保存
                           </button>
@@ -307,16 +307,16 @@ export default function DurationRateRegisterPage() {
                             onClick={() => {
                               setEditId(null)
                             }}
-                            className="px-2 py-1 border rounded"
+                            className="px-2 py-1 border border-border hover:bg-muted rounded text-foreground"
                           >
                             キャンセル
                           </button>
                         </>
                       ) : (
                         <>
-                          <span className="w-24 text-right tabular-nums">{r.minutes} 分</span>
-                          <span className="w-28 text-right tabular-nums">{r.membership_price} 円</span>
-                          <span className="w-28 text-right tabular-nums">{r.general_price} 円</span>
+                          <span className="w-24 text-right tabular-nums text-foreground">{r.minutes} 分</span>
+                          <span className="w-28 text-right tabular-nums text-foreground">{r.membership_price} 円</span>
+                          <span className="w-28 text-right tabular-nums text-foreground">{r.general_price} 円</span>
                           <button
                             type="button"
                             onClick={() => {
@@ -327,7 +327,7 @@ export default function DurationRateRegisterPage() {
                                 general_price: r.general_price,
                               })
                             }}
-                            className="px-2 py-1 border rounded"
+                            className="px-2 py-1 border border-border hover:bg-muted rounded text-foreground"
                           >
                             編集
                           </button>

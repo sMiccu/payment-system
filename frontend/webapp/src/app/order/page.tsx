@@ -109,7 +109,7 @@ const OrderContent = () => {
   }, [cart, customerId, router]);
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       <AppSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-4xl mx-auto">
@@ -121,29 +121,29 @@ const OrderContent = () => {
             >
               ← 戻る
             </Button>
-            <h1 className="text-2xl font-semibold mb-4">注文画面</h1>
-            {customerId && <p className="text-gray-600">顧客ID: {customerId}</p>}
-            {error && <div className="text-red-600 text-sm mb-3">{error}</div>}
+            <h1 className="text-2xl font-semibold mb-4 text-foreground">注文画面</h1>
+            {customerId && <p className="text-muted-foreground">顧客ID: {customerId}</p>}
+            {error && <div className="text-destructive text-sm mb-3">{error}</div>}
 
             <div className="grid grid-cols-3 gap-6">
               <div className="col-span-2 space-y-4">
                 {loading ? (
-                  <div className="text-sm text-gray-600">読み込み中...</div>
+                  <div className="text-sm text-muted-foreground">読み込み中...</div>
                 ) : (
                   groupedByCategory.map(([category, list]) => (
-                    <div key={category} className="bg-white border rounded p-4">
-                      <h2 className="text-lg font-medium mb-2">{category}</h2>
+                    <div key={category} className="surface-elevated border border-border/50 rounded p-4">
+                      <h2 className="text-lg font-medium mb-2 text-foreground">{category}</h2>
                       <div className="grid grid-cols-2 gap-3">
                         {list.map((m) => (
-                          <div key={m.id} className="border rounded p-3 flex items-center justify-between">
+                          <div key={m.id} className="border border-border/30 bg-card/30 rounded p-3 flex items-center justify-between hover:border-primary/30 transition-all">
                             <div>
-                              <div className="font-medium">{m.name}</div>
-                              <div className="text-sm text-gray-600">{formatJPY(m.price)}</div>
+                              <div className="font-medium text-foreground">{m.name}</div>
+                              <div className="text-sm text-muted-foreground">{formatJPY(m.price)}</div>
                             </div>
                             <Button size="sm" onClick={() => addToCart(m)}>追加</Button>
                           </div>
                         ))}
-                        {list.length === 0 && <div className="text-sm text-gray-500">商品がありません</div>}
+                        {list.length === 0 && <div className="text-sm text-muted-foreground">商品がありません</div>}
                       </div>
                     </div>
                   ))
@@ -151,32 +151,32 @@ const OrderContent = () => {
               </div>
 
               <div className="col-span-1">
-                <div className="bg-white border rounded p-4">
-                  <h2 className="text-lg font-medium mb-3">選択商品</h2>
+                <div className="surface-elevated border border-border/50 rounded p-4 sticky top-4">
+                  <h2 className="text-lg font-medium mb-3 text-foreground">選択商品</h2>
                   <div className="space-y-3">
                     {Object.values(cart).map((line) => (
-                      <div key={line.menu.id} className="flex items-center justify-between">
+                      <div key={line.menu.id} className="flex items-center justify-between border-b border-border/30 pb-2">
                         <div>
-                          <div className="font-medium">{line.menu.name}</div>
-                          <div className="text-sm text-gray-600">{formatJPY(line.menu.price)} × {line.quantity}</div>
+                          <div className="font-medium text-foreground">{line.menu.name}</div>
+                          <div className="text-sm text-muted-foreground">{formatJPY(line.menu.price)} × {line.quantity}</div>
                         </div>
                         <div className="flex items-center gap-2">
                           <Button size="sm" variant="outline" onClick={() => changeQty(line.menu.id, -1)}>-</Button>
-                          <span className="w-6 text-center">{line.quantity}</span>
+                          <span className="w-6 text-center text-foreground">{line.quantity}</span>
                           <Button size="sm" variant="outline" onClick={() => changeQty(line.menu.id, +1)}>+</Button>
                           <Button size="sm" variant="destructive" onClick={() => removeLine(line.menu.id)}>削除</Button>
                         </div>
                       </div>
                     ))}
                     {Object.keys(cart).length === 0 && (
-                      <div className="text-sm text-gray-500">商品が選択されていません</div>
+                      <div className="text-sm text-muted-foreground">商品が選択されていません</div>
                     )}
                   </div>
-                  <div className="border-t mt-4 pt-4 flex items-center justify-between">
-                    <div className="text-gray-600">小計</div>
-                    <div className="text-lg font-semibold">{formatJPY(total)}</div>
+                  <div className="border-t border-border mt-4 pt-4 flex items-center justify-between">
+                    <div className="text-muted-foreground">小計</div>
+                    <div className="text-lg font-semibold text-foreground">{formatJPY(total)}</div>
                   </div>
-                  <Button className="w-full mt-4" disabled={!canSubmit} onClick={onSubmit}>
+                  <Button className="w-full mt-4 bg-gradient-to-r from-primary to-secondary hover:opacity-90" disabled={!canSubmit} onClick={onSubmit}>
                     {submitting ? "送信中..." : "注文確定"}
                   </Button>
                 </div>

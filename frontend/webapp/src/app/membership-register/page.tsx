@@ -108,7 +108,7 @@ const MembershipRegisterPage: NextPage = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       <AppSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-md mx-auto">
@@ -116,9 +116,9 @@ const MembershipRegisterPage: NextPage = () => {
             ← 戻る
           </Button>
 
-          <Card>
+          <Card className="border-border/50 bg-card/80 backdrop-blur-xl">
             <CardHeader>
-              <CardTitle>会員登録</CardTitle>
+              <CardTitle className="text-foreground">会員登録</CardTitle>
             </CardHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -130,7 +130,11 @@ const MembershipRegisterPage: NextPage = () => {
                       <FormItem>
                         <FormLabel>姓</FormLabel>
                         <FormControl>
-                          <Input placeholder="例: 田中" {...field} />
+                          <Input 
+                            placeholder="例: 田中" 
+                            {...field} 
+                            className="bg-input/50 border-border/50"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -143,7 +147,11 @@ const MembershipRegisterPage: NextPage = () => {
                       <FormItem>
                         <FormLabel>名</FormLabel>
                         <FormControl>
-                          <Input placeholder="例: 太郎" {...field} />
+                          <Input 
+                            placeholder="例: 太郎" 
+                            {...field} 
+                            className="bg-input/50 border-border/50"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -156,7 +164,11 @@ const MembershipRegisterPage: NextPage = () => {
                       <FormItem>
                         <FormLabel>セイ</FormLabel>
                         <FormControl>
-                          <Input placeholder="例: タナカ" {...field} />
+                          <Input 
+                            placeholder="例: タナカ" 
+                            {...field} 
+                            className="bg-input/50 border-border/50"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -169,7 +181,11 @@ const MembershipRegisterPage: NextPage = () => {
                       <FormItem>
                         <FormLabel>メイ</FormLabel>
                         <FormControl>
-                          <Input placeholder="例: タロウ" {...field} />
+                          <Input 
+                            placeholder="例: タロウ" 
+                            {...field} 
+                            className="bg-input/50 border-border/50"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -186,7 +202,7 @@ const MembershipRegisterPage: NextPage = () => {
                             <select
                               {...field}
                               aria-label="国番号"
-                              className="w-full border rounded px-2 py-2"
+                              className="w-full border border-border/50 bg-input/50 text-foreground rounded px-2 py-2"
                             >
                               <option value="+81">+81</option>
                               <option value="+1">+1</option>
@@ -203,7 +219,12 @@ const MembershipRegisterPage: NextPage = () => {
                         <FormItem className="flex-1">
                           <FormLabel>電話番号</FormLabel>
                           <FormControl>
-                            <Input type="tel" placeholder="例: 08012345678" {...field} />
+                            <Input 
+                              type="tel" 
+                              placeholder="例: 08012345678" 
+                              {...field} 
+                              className="bg-input/50 border-border/50"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -212,8 +233,12 @@ const MembershipRegisterPage: NextPage = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-2">
-                  {error && <p className="text-red-500 text-sm">{error}</p>}
-                  <Button className="w-full" type="submit" disabled={isSubmitting}>
+                  {error && <p className="text-destructive text-sm">{error}</p>}
+                  <Button 
+                    className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90" 
+                    type="submit" 
+                    disabled={isSubmitting}
+                  >
                     {isSubmitting ? "登録中..." : "登録"}
                   </Button>
                 </CardFooter>

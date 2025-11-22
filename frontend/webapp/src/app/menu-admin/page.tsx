@@ -124,24 +124,24 @@ export default function MenuAdminPage() {
   // 削除機能は無効化（ボタン/ロジックを削除）
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       <AppSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-md mx-auto">
-          <h1 className="text-xl font-semibold mb-4">メニュー管理</h1>
+          <h1 className="text-xl font-semibold mb-4 text-foreground">メニュー管理</h1>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <Controller
               name="name"
               control={control}
               render={({ field }) => (
-                <input {...field} placeholder="メニュー名" className="border p-2" />
+                <input {...field} placeholder="メニュー名" className="border border-border/50 bg-input/50 text-foreground p-2 rounded" />
               )}
             />
             <Controller
               name="price"
               control={control}
               render={({ field }) => (
-                <input {...field} type="number" placeholder="価格" className="border p-2" value={field.value || ""} onChange={e => field.onChange(e.target.valueAsNumber)}/>
+                <input {...field} type="number" placeholder="価格" className="border border-border/50 bg-input/50 text-foreground p-2 rounded" value={field.value || ""} onChange={e => field.onChange(e.target.valueAsNumber)}/>
               )}
             />
             <Controller
@@ -149,7 +149,7 @@ export default function MenuAdminPage() {
               control={control}
               render={({ field }) => (
                 <select
-                  className="border p-2"
+                  className="border border-border/50 bg-input/50 text-foreground p-2 rounded"
                   value={field.value ?? ""}
                   onChange={(e) => {
                     const v = e.target.value === "" ? null : Number(e.target.value);
@@ -165,21 +165,21 @@ export default function MenuAdminPage() {
                 </select>
               )}
             />
-            <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+            <button type="submit" className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white p-2 rounded">
               登録
             </button>
           </form>
 
           <details className="mt-8">
-            <summary className="cursor-pointer select-none text-base font-medium">メニュー一覧</summary>
+            <summary className="cursor-pointer select-none text-base font-medium text-foreground">メニュー一覧</summary>
             <div className="mt-3 flex flex-col gap-2">
-              {isLoadingMenus && <div className="text-sm text-gray-600">読み込み中...</div>}
+              {isLoadingMenus && <div className="text-sm text-muted-foreground">読み込み中...</div>}
               {!isLoadingMenus && menus.length === 0 && (
-                <div className="text-sm text-gray-600">メニューがありません。</div>
+                <div className="text-sm text-muted-foreground">メニューがありません。</div>
               )}
               {!isLoadingMenus && menus.length > 0 && (
                 <>
-                <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
                   <span className="flex-1">メニュー名</span>
                   <span className="w-24 text-right">価格</span>
                   <span className="w-28 text-center">カテゴリー</span>
@@ -191,20 +191,20 @@ export default function MenuAdminPage() {
                       {menuEditId === m.id ? (
                         <>
                           <input
-                            className="border p-1 flex-1"
+                            className="border border-border/50 bg-input/50 text-foreground p-1 flex-1 rounded"
                             value={menuEdit.name}
                             onChange={(e) => setMenuEdit({ ...menuEdit, name: e.target.value })}
                             placeholder="メニュー名"
                           />
                           <input
                             type="number"
-                            className="border p-1 w-28"
+                            className="border border-border/50 bg-input/50 text-foreground p-1 w-28 rounded"
                             value={Number.isFinite(menuEdit.price) ? menuEdit.price : 0}
                             onChange={(e) => setMenuEdit({ ...menuEdit, price: e.target.valueAsNumber })}
                             placeholder="価格"
                           />
                           <select
-                            className="border p-1"
+                            className="border border-border/50 bg-input/50 text-foreground p-1 rounded"
                             value={menuEdit.category_id ?? ""}
                             onChange={(e) =>
                               setMenuEdit({
@@ -223,28 +223,28 @@ export default function MenuAdminPage() {
                           <button
                             type="button"
                             onClick={() => saveEditMenu(m.id)}
-                            className="px-2 py-1 bg-blue-500 text-white rounded"
+                            className="px-2 py-1 bg-primary hover:bg-primary/90 text-white rounded"
                           >
                             保存
                           </button>
                           <button
                             type="button"
                             onClick={cancelEditMenu}
-                            className="px-2 py-1 border rounded"
+                            className="px-2 py-1 border border-border hover:bg-muted rounded text-foreground"
                           >
                             キャンセル
                           </button>
                         </>
                       ) : (
                         <>
-                          <span className="flex-1">{m.name}</span>
-                          <span className="w-24 text-right">{m.price}</span>
-                          <span className="w-28 text-center">{m.category_name || "未分類"}</span>
+                          <span className="flex-1 text-foreground">{m.name}</span>
+                          <span className="w-24 text-right text-foreground">{m.price}</span>
+                          <span className="w-28 text-center text-muted-foreground">{m.category_name || "未分類"}</span>
                           <span className="w-20 text-center">
                             <button
                               type="button"
                               onClick={() => startEditMenu(m)}
-                              className="px-2 py-1 border rounded"
+                              className="px-2 py-1 border border-border hover:bg-muted rounded text-foreground"
                             >
                               編集
                             </button>

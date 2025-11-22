@@ -104,7 +104,7 @@ const PaymentContent = () => {
   }, [customerId, payMethod, router]);
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       <AppSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-4xl mx-auto">
@@ -116,25 +116,25 @@ const PaymentContent = () => {
             >
               ← 戻る
             </Button>
-            <h1 className="text-2xl font-semibold mb-4">会計画面</h1>
+            <h1 className="text-2xl font-semibold mb-4 text-foreground">会計画面</h1>
             {customerId && (
-              <p className="text-gray-600">顧客ID: {customerId}</p>
+              <p className="text-muted-foreground">顧客ID: {customerId}</p>
             )}
             <div className="mt-6 space-y-4">
               <div className="flex items-end gap-4">
                 <div className="flex flex-col">
-                  <label className="text-sm text-gray-600">開始時刻（ISO8601 任意）</label>
+                  <label className="text-sm text-muted-foreground">開始時刻（ISO8601 任意）</label>
                   <input
-                    className="border rounded px-3 py-2 w-72"
+                    className="border border-border/50 bg-input/50 text-foreground rounded px-3 py-2 w-72"
                     placeholder="例: 2025-11-19T10:00:00+09:00"
                     value={startDt}
                     onChange={(e) => setStartDt(e.target.value)}
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm text-gray-600">終了時刻（ISO8601 任意）</label>
+                  <label className="text-sm text-muted-foreground">終了時刻（ISO8601 任意）</label>
                   <input
-                    className="border rounded px-3 py-2 w-72"
+                    className="border border-border/50 bg-input/50 text-foreground rounded px-3 py-2 w-72"
                     placeholder="例: 2025-11-19T12:34:56+09:00"
                     value={endDt}
                     onChange={(e) => setEndDt(e.target.value)}
@@ -145,28 +145,28 @@ const PaymentContent = () => {
                 </Button>
               </div>
               {error && (
-                <div className="text-red-600 text-sm">{error}</div>
+                <div className="text-destructive text-sm">{error}</div>
               )}
               {data && (
                 <div className="space-y-6">
-                  <div className="bg-white border rounded p-4">
-                    <h2 className="text-lg font-medium mb-2">サマリ</h2>
+                  <div className="surface-elevated border border-border/50 rounded p-4">
+                    <h2 className="text-lg font-medium mb-2 text-foreground">サマリ</h2>
                     <div className="grid grid-cols-4 gap-2 text-sm">
-                      <div className="text-gray-600">実プレイ時間</div>
-                      <div>{formatMinutes(data.played_minutes)}</div>
-                      <div className="text-gray-600">小計</div>
-                      <div className="font-semibold">{formatCurrency(data.subtotal)}</div>
+                      <div className="text-muted-foreground">実プレイ時間</div>
+                      <div className="text-foreground">{formatMinutes(data.played_minutes)}</div>
+                      <div className="text-muted-foreground">小計</div>
+                      <div className="font-semibold text-foreground">{formatCurrency(data.subtotal)}</div>
                       <div></div>
                       <div></div>
                     </div>
                   </div>
 
-                  <div className="bg-white border rounded p-4">
-                    <h2 className="text-lg font-medium mb-2">注文内訳</h2>
+                  <div className="surface-elevated border border-border/50 rounded p-4">
+                    <h2 className="text-lg font-medium mb-2 text-foreground">注文内訳</h2>
                     <div className="overflow-x-auto">
                       <table className="min-w-full text-sm">
                         <thead>
-                          <tr className="text-left text-gray-600 border-b">
+                          <tr className="text-left text-muted-foreground border-b border-border">
                             <th className="py-2 pr-4">商品</th>
                             <th className="py-2 pr-4">数量</th>
                             <th className="py-2 pr-4">小計</th>
@@ -174,31 +174,31 @@ const PaymentContent = () => {
                         </thead>
                         <tbody>
                           {orderSummary?.items.map((row) => (
-                            <tr key={row.menu_id} className="border-b last:border-b-0">
-                              <td className="py-2 pr-4">{row.menu_name}</td>
-                              <td className="py-2 pr-4">{row.quantity}</td>
-                              <td className="py-2 pr-4 font-medium">{formatCurrency(row.line_total)}</td>
+                            <tr key={row.menu_id} className="border-b border-border/30 last:border-b-0">
+                              <td className="py-2 pr-4 text-foreground">{row.menu_name}</td>
+                              <td className="py-2 pr-4 text-foreground">{row.quantity}</td>
+                              <td className="py-2 pr-4 font-medium text-foreground">{formatCurrency(row.line_total)}</td>
                             </tr>
                           ))}
                           {(orderSummary?.items.length ?? 0) === 0 && (
                             <tr>
-                              <td className="py-3 text-gray-500" colSpan={3}>注文はありません</td>
+                              <td className="py-3 text-muted-foreground" colSpan={3}>注文はありません</td>
                             </tr>
                           )}
                         </tbody>
                       </table>
                     </div>
-                    <div className="mt-3 text-right text-sm text-gray-700">
-                      注文小計: <span className="font-medium">{formatCurrency(orderSummary?.order_total ?? "0")}</span>
+                    <div className="mt-3 text-right text-sm text-muted-foreground">
+                      注文小計: <span className="font-medium text-foreground">{formatCurrency(orderSummary?.order_total ?? "0")}</span>
                     </div>
                   </div>
 
-                  <div className="bg-white border rounded p-4">
-                    <h2 className="text-lg font-medium mb-2">時間料金内訳</h2>
+                  <div className="surface-elevated border border-border/50 rounded p-4">
+                    <h2 className="text-lg font-medium mb-2 text-foreground">時間料金内訳</h2>
                     <div className="overflow-x-auto">
                       <table className="min-w-full text-sm">
                         <thead>
-                          <tr className="text-left text-gray-600 border-b">
+                          <tr className="text-left text-muted-foreground border-b border-border">
                             <th className="py-2 pr-4">刻み（分）</th>
                             <th className="py-2 pr-4">回数</th>
                             <th className="py-2 pr-4">単価</th>
@@ -207,16 +207,16 @@ const PaymentContent = () => {
                         </thead>
                         <tbody>
                           {data.breakdown.map((row, idx) => (
-                            <tr key={idx} className="border-b last:border-b-0">
-                              <td className="py-2 pr-4">{formatMinutes(row.minutes)}</td>
-                              <td className="py-2 pr-4">{row.count}</td>
-                              <td className="py-2 pr-4">{formatCurrency(row.unit_price)}</td>
-                              <td className="py-2 pr-4 font-medium">{formatCurrency(row.line_total)}</td>
+                            <tr key={idx} className="border-b border-border/30 last:border-b-0">
+                              <td className="py-2 pr-4 text-foreground">{formatMinutes(row.minutes)}</td>
+                              <td className="py-2 pr-4 text-foreground">{row.count}</td>
+                              <td className="py-2 pr-4 text-foreground">{formatCurrency(row.unit_price)}</td>
+                              <td className="py-2 pr-4 font-medium text-foreground">{formatCurrency(row.line_total)}</td>
                             </tr>
                           ))}
                           {data.breakdown.length === 0 && (
                             <tr>
-                              <td className="py-3 text-gray-500" colSpan={4}>内訳はありません</td>
+                              <td className="py-3 text-muted-foreground" colSpan={4}>内訳はありません</td>
                             </tr>
                           )}
                         </tbody>
@@ -224,10 +224,10 @@ const PaymentContent = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white border rounded p-4">
-                    <h2 className="text-lg font-medium mb-2">会計</h2>
+                  <div className="surface-elevated border border-border/50 rounded p-4">
+                    <h2 className="text-lg font-medium mb-2 text-foreground">会計</h2>
                     <div className="flex items-center gap-6">
-                      <label className="flex items-center gap-2 text-sm">
+                      <label className="flex items-center gap-2 text-sm text-foreground">
                         <input
                           type="radio"
                           name="payment_method"
@@ -237,7 +237,7 @@ const PaymentContent = () => {
                         />
                         現金
                       </label>
-                      <label className="flex items-center gap-2 text-sm">
+                      <label className="flex items-center gap-2 text-sm text-foreground">
                         <input
                           type="radio"
                           name="payment_method"
@@ -247,19 +247,19 @@ const PaymentContent = () => {
                         />
                         PayPay
                       </label>
-                      <div className="ml-auto text-lg">
+                      <div className="ml-auto text-lg text-foreground">
                         合計: <span className="font-semibold">{formatCurrency(String(grandTotal))}</span>
                       </div>
                     </div>
                     <div className="mt-2 text-right space-y-0.5">
-                      <div className="text-sm text-gray-700">
-                        消費税（10%）: <span className="font-medium">{formatCurrency(String(taxAmount))}</span>
+                      <div className="text-sm text-muted-foreground">
+                        消費税（10%）: <span className="font-medium text-foreground">{formatCurrency(String(taxAmount))}</span>
                       </div>
-                      <div className="text-lg">
+                      <div className="text-lg text-foreground">
                         税込金額: <span className="font-semibold">{formatCurrency(String(totalInclTax))}</span>
                       </div>
                     </div>
-                    <Button className="mt-4" disabled={!payMethod || paying} onClick={onPay}>
+                    <Button className="mt-4 bg-gradient-to-r from-primary to-secondary hover:opacity-90" disabled={!payMethod || paying} onClick={onPay}>
                       {paying ? "会計処理中..." : "会計"}
                     </Button>
                   </div>

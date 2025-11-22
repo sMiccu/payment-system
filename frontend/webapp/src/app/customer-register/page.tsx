@@ -156,7 +156,7 @@ const CustomerRegisterPage: NextPage = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       <AppSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-md mx-auto">
@@ -168,9 +168,9 @@ const CustomerRegisterPage: NextPage = () => {
             ← 戻る
           </Button>
 
-          <Card>
+          <Card className="border-border/50 bg-card/80 backdrop-blur-xl">
             <CardHeader>
-              <CardTitle>来店登録</CardTitle>
+              <CardTitle className="text-foreground">来店登録</CardTitle>
             </CardHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -182,13 +182,17 @@ const CustomerRegisterPage: NextPage = () => {
                       <FormItem>
                         <FormLabel>顧客名</FormLabel>
                         <FormControl>
-                          <Input placeholder="例: 田中 太郎" {...field} />
+                          <Input 
+                            placeholder="例: 田中 太郎" 
+                            {...field} 
+                            className="bg-input/50 border-border/50"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     <div className="flex items-end gap-2">
                       <FormField
                         control={form.control}
@@ -200,7 +204,7 @@ const CustomerRegisterPage: NextPage = () => {
                               <select
                                 {...field}
                                 aria-label="国番号"
-                                className="w-full border rounded px-2 py-2"
+                                className="w-full border border-border/50 bg-input/50 text-foreground rounded px-2 py-2"
                               >
                                 <option value="+81">+81</option>
                                 <option value="+1">+1</option>
@@ -217,27 +221,38 @@ const CustomerRegisterPage: NextPage = () => {
                           <FormItem className="flex-1">
                             <FormLabel>電話番号（検索用）</FormLabel>
                             <FormControl>
-                              <Input type="tel" placeholder="例: 08012345678" {...field} />
+                              <Input 
+                                type="tel" 
+                                placeholder="例: 08012345678" 
+                                {...field} 
+                                className="bg-input/50 border-border/50"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                      <Button type="button" onClick={handleSearch} disabled={isSearching}>
+                      <Button 
+                        type="button" 
+                        onClick={handleSearch} 
+                        disabled={isSearching}
+                        variant="secondary"
+                      >
                         {isSearching ? "検索中..." : "会員検索"}
                       </Button>
                     </div>
-                    {searchError && <p className="text-red-500 text-sm">{searchError}</p>}
+                    {searchError && <p className="text-destructive text-sm">{searchError}</p>}
                     {memberships.length > 0 && (
-                      <div className="border rounded p-2 space-y-2">
+                      <div className="border border-border/50 bg-muted/30 rounded p-3 space-y-2">
                         {memberships.map((m) => (
-                          <div key={m.id} className="flex items-center justify-between">
+                          <div key={m.id} className="flex items-center justify-between p-2 bg-card/50 rounded">
                             <div className="text-sm">
-                              <div>{m.last_name} {m.first_name}</div>
-                              {m.phone_number && <div className="text-gray-500">{m.phone_number}</div>}
+                              <div className="text-foreground">{m.last_name} {m.first_name}</div>
+                              {m.phone_number && <div className="text-muted-foreground">{m.phone_number}</div>}
                             </div>
                             <Button
                               type="button"
+                              size="sm"
                               variant={selectedMembershipId === m.id ? "default" : "secondary"}
                               onClick={() => handleSelect(m)}
                             >
@@ -249,10 +264,10 @@ const CustomerRegisterPage: NextPage = () => {
                     )}
                   </div>
                 </CardContent>
-                <CardFooter className="flex flex-col space-y-2">
-                  {error && <p className="text-red-500 text-sm">{error}</p>}
+                <CardFooter className="flex flex-col space-y-2 mt-6">
+                  {error && <p className="text-destructive text-sm">{error}</p>}
                   <Button 
-                    className="w-full" 
+                    className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90" 
                     type="submit"
                     disabled={isSubmitting}
                   >

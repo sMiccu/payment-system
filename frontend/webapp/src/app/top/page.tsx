@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
+import { Star, Play, Pause } from "lucide-react";
 
 // APIから取得する顧客データの型定義
 type CustomerApiResponse = {
@@ -33,6 +34,7 @@ type Customer = {
   isBreaking: boolean;
   startDatetime: string | null;
   endDatetime: string | null;
+  isMember: boolean;
 };
 
 // start_datetimeから時刻を抽出する関数
@@ -233,6 +235,7 @@ const Page: NextPage = () => {
             isBreaking: customer.is_breaking,
             startDatetime: customer.start_datetime,
             endDatetime: customer.end_datetime,
+            isMember: customer.membership !== null,
           })
         );
         
@@ -250,14 +253,14 @@ const Page: NextPage = () => {
   }, []);
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       <AppSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* 来店登録ボタン */}
           <div className="mb-8">
             <Button
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-base px-8 py-6 h-auto shadow-md"
+              className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-medium text-base px-8 py-6 h-auto"
               size="lg"
               onClick={() => router.push("/customer-register")}
             >
@@ -267,52 +270,70 @@ const Page: NextPage = () => {
 
           {/* 顧客リスト */}
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold mb-4">来店中のお客様</h2>
+            <h2 className="text-xl font-semibold mb-4 text-foreground">来店中のお客様</h2>
             {isLoading ? (
-              <div className="text-center py-8 text-gray-600">
+              <div className="text-center py-8 text-muted-foreground">
                 読み込み中...
               </div>
             ) : error ? (
-              <div className="text-center py-8 text-red-600">
+              <div className="text-center py-8 text-destructive">
                 {error}
               </div>
             ) : customers.length === 0 ? (
-              <div className="text-center py-8 text-gray-600">
+              <div className="text-center py-8 text-muted-foreground">
                 来店中の顧客はいません
               </div>
             ) : (
               customers.map((customer) => (
                 <div key={customer.id}>
                   <div
-                    className="bg-gray-100 rounded-lg p-4 flex items-center justify-between shadow-sm mb-3"
+                    className="surface-elevated rounded-lg p-4 flex items-center justify-between border border-border/50 hover:border-primary/30 transition-all mb-3"
                   >
-                    <div className="flex-1 flex items-center font-medium text-gray-800">
+                    <div className="flex-1 flex items-center font-medium text-foreground gap-3">
                       <button
-                        className="mr-3 text-gray-600 hover:text-gray-800 transition"
+                        className="text-muted-foreground hover:text-foreground transition"
                         onClick={() => toggleExpand(customer.id)}
                         aria-label="詳細を展開"
                         title="詳細を展開"
                       >
                         {expanded[customer.id] ? "▲" : "▼"}
                       </button>
+                      {customer.isMember && (
+                        <Star className="w-4 h-4 fill-primary text-primary" />
+                      )}
                       <span>{customer.name}</span>
                     </div>
-                    <div className="flex-1 text-gray-600">開始: {customer.startTime}</div>
+                    <div className="flex-1 flex items-center gap-2 text-muted-foreground">
+                      {customer.isBreaking ? (
+                        <span className="flex items-center gap-1 text-orange-400">
+                          <Pause className="w-4 h-4" />
+                          休憩中
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-green-400">
+                          <Play className="w-4 h-4" />
+                          プレイ中
+                        </span>
+                      )}
+                      <span className="ml-2">開始: {customer.startTime}</span>
+                    </div>
                     <div className="flex items-center space-x-4">
                       <Button
-                        className="bg-gray-300 hover:bg-gray-400 text-black font-medium rounded-lg px-6 border border-gray-200"
+                        variant="secondary"
+                        className="font-medium rounded-lg px-6"
                         onClick={() => toggleBreak(customer.id, customer.isBreaking)}
                       >
                         {customer.isBreaking ? "再開" : "停止"}
                       </Button>
                       <Button
-                        className="bg-green-400 hover:bg-green-500 text-black font-medium rounded-lg px-6 border border-gray-200"
+                        className="bg-[var(--success)] hover:bg-[var(--success)]/90 text-white font-medium rounded-lg px-6"
                         onClick={() => router.push(`/order?customerId=${customer.id}`)}
                       >
                         注文
                       </Button>
                       <Button
-                        className="bg-red-300 hover:bg-red-400 text-white font-medium rounded-lg px-6 border border-gray-200"
+                        variant="destructive"
+                        className="font-medium rounded-lg px-6"
                         disabled={!customer.isBreaking}
                         onClick={() => router.push(`/payment?customerId=${customer.id}`)}
                       >
@@ -321,16 +342,16 @@ const Page: NextPage = () => {
                     </div>
                   </div>
                   {expanded[customer.id] && (
-                    <div className="bg-white rounded-md p-4 border border-gray-200 mb-3">
+                    <div className="bg-card/50 rounded-md p-4 border border-border/50 mb-3 backdrop-blur-sm">
                       {breaksLoading[customer.id] ? (
-                        <div className="text-gray-600">履歴を読み込み中...</div>
+                        <div className="text-muted-foreground">履歴を読み込み中...</div>
                       ) : breaksError[customer.id] ? (
-                        <div className="text-red-600">{breaksError[customer.id]}</div>
+                        <div className="text-destructive">{breaksError[customer.id]}</div>
                       ) : (
                         <>
                           <div className="mb-3">
-                            <div className="font-semibold text-gray-800 mb-2">履歴</div>
-                          <ul className="list-disc list-inside text-gray-700 space-y-1">
+                            <div className="font-semibold text-foreground mb-2">履歴</div>
+                          <ul className="list-disc list-inside text-muted-foreground space-y-1">
                             {getPlaySegments(customer, breaksMap[customer.id] ?? []).map((seg, idx) => (
                               <li key={idx}>
                                 {seg.leftLabel}: {formatDateTime(seg.left.toISOString())} 〜 {seg.rightLabel}: {formatDateTime(seg.right.toISOString())}
@@ -343,21 +364,21 @@ const Page: NextPage = () => {
                             const stayMs = totals.totalPlayMs + totals.totalStopMs;
                             return (
                               <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <div className="p-3 bg-gray-50 rounded border">
-                                  <div className="text-sm text-gray-500">滞在時間</div>
-                                  <div className="text-lg font-semibold text-gray-800">
+                                <div className="p-3 bg-muted/30 rounded border border-border/30">
+                                  <div className="text-sm text-muted-foreground">滞在時間</div>
+                                  <div className="text-lg font-semibold text-foreground">
                                     {formatMs(stayMs)}
                                   </div>
                                 </div>
-                                <div className="p-3 bg-gray-50 rounded border">
-                                  <div className="text-sm text-gray-500">総プレイ時間</div>
-                                  <div className="text-lg font-semibold text-gray-800">
+                                <div className="p-3 bg-muted/30 rounded border border-border/30">
+                                  <div className="text-sm text-muted-foreground">総プレイ時間</div>
+                                  <div className="text-lg font-semibold text-foreground">
                                     {formatMs(totals.totalPlayMs)}
                                   </div>
                                 </div>
-                                <div className="p-3 bg-gray-50 rounded border">
-                                  <div className="text-sm text-gray-500">総停止時間</div>
-                                  <div className="text-lg font-semibold text-gray-800">
+                                <div className="p-3 bg-muted/30 rounded border border-border/30">
+                                  <div className="text-sm text-muted-foreground">総停止時間</div>
+                                  <div className="text-lg font-semibold text-foreground">
                                     {formatMs(totals.totalStopMs)}
                                   </div>
                                 </div>

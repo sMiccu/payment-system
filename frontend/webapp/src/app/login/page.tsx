@@ -63,14 +63,26 @@ const Page: NextPage = () => {
     <div
       className={cn(
         "flex min-h-screen flex-col items-center justify-center",
-        "bg-gradient-to-t from-neutral-300 via-neutral-200 to-neutral-100",
+        "bg-gradient-to-br from-[#0a0a0a] via-[#1a1a1a] to-[#0a0a0a]",
+        "relative overflow-hidden"
       )}
     >
+      {/* Background glow effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-[120px]" />
+      </div>
+      
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Card className="w-[350px]">
-            <CardHeader>
-              <CardTitle>ログイン</CardTitle>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="relative z-10">
+          <Card className="w-[400px] glow-card border-border/50 bg-card/80 backdrop-blur-xl">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                ログイン
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                アカウント情報を入力してください
+              </p>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -80,7 +92,10 @@ const Page: NextPage = () => {
                   <FormItem>
                     <FormLabel>ユーザー名</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input 
+                        {...field} 
+                        className="bg-input/50 border-border/50 focus:border-primary/50 transition-all"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -94,7 +109,11 @@ const Page: NextPage = () => {
                   <FormItem>
                     <FormLabel>パスワード</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input 
+                        type="password" 
+                        {...field} 
+                        className="bg-input/50 border-border/50 focus:border-primary/50 transition-all"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -102,8 +121,10 @@ const Page: NextPage = () => {
               />
             </CardContent>
             <CardFooter className="flex flex-col space-y-2">
-              {error && <p className="text-red-500 text-sm truncate">{error}</p>}
-              <Button className="w-full">ログイン</Button>
+              {error && <p className="text-destructive text-sm truncate">{error}</p>}
+              <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity">
+                ログイン
+              </Button>
             </CardFooter>
           </Card>
         </form>

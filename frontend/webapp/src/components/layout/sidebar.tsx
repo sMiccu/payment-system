@@ -4,50 +4,40 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarHeader,
   SidebarProvider,
 } from "../ui/sidebar"
 import Link from "next/link"
+import { Users, UserCheck, Menu, FolderOpen, Clock } from "lucide-react"
 
 export function AppSidebar() {
+  const menuItems = [
+    { href: "/top", label: "来店中のお客様一覧", icon: Users },
+    { href: "/membership-register", label: "会員管理", icon: UserCheck },
+    { href: "/menu-admin", label: "メニュー管理", icon: Menu },
+    { href: "/category-admin", label: "カテゴリー管理", icon: FolderOpen },
+    { href: "/duration-rate-register", label: "時間料金管理", icon: Clock },
+  ];
+
   return (
     <SidebarProvider>
-      <Sidebar className="flex flex-col h-screen">
-        <SidebarHeader>
-          <h2 className="text-lg font-semibold">
-            Side Menu
-          </h2>
-        </SidebarHeader>
-        <SidebarContent className="flex-1 overflow-y-auto min-h-0">
-          <SidebarGroup>
-            <Link href="/top" className="block py-1 px-2 hover:bg-gray-100 rounded">
-              トップ
-            </Link>
-          </SidebarGroup>
-          <SidebarGroup>
-            <Link href="/customer-register" className="block py-1 px-2 hover:bg-gray-100 rounded">
-              来店登録
-            </Link>
-          </SidebarGroup>
-          <SidebarGroup>
-            <Link href="/membership-register" className="block py-1 px-2 hover:bg-gray-100 rounded">
-              会員登録
-            </Link>
-          </SidebarGroup>
-          <SidebarGroup>
-            <Link href="/menu-admin" className="block py-1 px-2 hover:bg-gray-100 rounded">
-              メニュー管理
-            </Link>
-          </SidebarGroup>
-          <SidebarGroup>
-            <Link href="/category-admin" className="block py-1 px-2 hover:bg-gray-100 rounded">
-              カテゴリー管理
-            </Link>
-          </SidebarGroup>
-          <SidebarGroup>
-            <Link href="/duration-rate-register" className="block py-1 px-2 hover:bg-gray-100 rounded">
-              時間料金登録
-            </Link>
+      <Sidebar className="flex flex-col h-screen border-r border-border bg-sidebar">
+        <SidebarContent className="flex-1 overflow-y-auto min-h-0 pt-6">
+          <SidebarGroup className="space-y-1">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link 
+                  key={item.href}
+                  href={item.href} 
+                  className="flex items-center gap-3 py-3 px-4 hover:bg-sidebar-accent rounded-lg transition-all group"
+                >
+                  <Icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <span className="text-sm font-medium text-sidebar-foreground group-hover:text-primary transition-colors">
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
           </SidebarGroup>
         </SidebarContent>
       </Sidebar>

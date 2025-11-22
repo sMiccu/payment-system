@@ -97,11 +97,11 @@ export default function CategoryAdminPage() {
   // 削除機能は無効化（ボタン/ロジックを削除）
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       <AppSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-md mx-auto">
-          <h1 className="text-xl font-semibold mb-4">カテゴリー管理</h1>
+          <h1 className="text-xl font-semibold mb-4 text-foreground">カテゴリー管理</h1>
           <form
             onSubmit={(e) => {
               e.preventDefault()
@@ -113,28 +113,28 @@ export default function CategoryAdminPage() {
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
               placeholder="カテゴリ名"
-              className="border p-2"
+              className="border border-border/50 bg-input/50 text-foreground p-2 rounded"
             />
             <button
               type="submit"
               disabled={isCreatingCategory}
-              className="bg-blue-500 text-white p-2 rounded disabled:opacity-50"
+              className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white p-2 rounded disabled:opacity-50"
             >
               登録
             </button>
-            {categoryError && <div className="text-sm text-red-600">{categoryError}</div>}
+            {categoryError && <div className="text-sm text-destructive">{categoryError}</div>}
           </form>
 
           <details className="mt-8">
-            <summary className="cursor-pointer select-none text-base font-medium">カテゴリー一覧</summary>
+            <summary className="cursor-pointer select-none text-base font-medium text-foreground">カテゴリー一覧</summary>
             <div className="mt-3 flex flex-col gap-2">
-              {isLoadingCategories && <div className="text-sm text-gray-600">読み込み中...</div>}
+              {isLoadingCategories && <div className="text-sm text-muted-foreground">読み込み中...</div>}
               {!isLoadingCategories && categories.length === 0 && (
-                <div className="text-sm text-gray-600">カテゴリがありません。</div>
+                <div className="text-sm text-muted-foreground">カテゴリがありません。</div>
               )}
               {!isLoadingCategories && categories.length > 0 && (
                 <>
-                <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
                   <span className="flex-1">カテゴリー名</span>
                   <span className="flex-1" />
                 </div>
@@ -144,7 +144,7 @@ export default function CategoryAdminPage() {
                       {categoryEditId === c.id ? (
                         <>
                           <input
-                            className="border p-1 flex-1"
+                            className="border border-border/50 bg-input/50 text-foreground p-1 flex-1 rounded"
                             value={categoryEditName}
                             onChange={(e) => setCategoryEditName(e.target.value)}
                           />
@@ -152,26 +152,26 @@ export default function CategoryAdminPage() {
                             type="button"
                             onClick={() => saveEditCategory(c.id)}
                             disabled={categorySavingId === c.id}
-                            className="px-2 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
+                            className="px-2 py-1 bg-primary hover:bg-primary/90 text-white rounded disabled:opacity-50"
                           >
                             保存
                           </button>
                           <button
                             type="button"
                             onClick={cancelEditCategory}
-                            className="px-2 py-1 border rounded"
+                            className="px-2 py-1 border border-border hover:bg-muted rounded text-foreground"
                           >
                             キャンセル
                           </button>
                         </>
                       ) : (
                         <>
-                          <span className="flex-1">{c.name}</span>
+                          <span className="flex-1 text-foreground">{c.name}</span>
                           <button
                             type="button"
                             onClick={() => startEditCategory(c)}
                             disabled={isUncategorized(c)}
-                            className="px-2 py-1 border rounded disabled:opacity-50"
+                            className="px-2 py-1 border border-border hover:bg-muted rounded text-foreground disabled:opacity-50"
                           >
                             編集
                           </button>
