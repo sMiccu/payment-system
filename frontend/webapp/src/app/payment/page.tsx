@@ -13,20 +13,36 @@ const PaymentContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const customerId = searchParams.get("customerId");
+  const customerName = searchParams.get("customerName");
   const [data, setData] = useState<CustomerQuoteResponse | null>(null);
   const [orderSummary, setOrderSummary] = useState<PaymentSummaryResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [startDt, setStartDt] = useState<string>("");
-  const [endDt, setEndDt] = useState<string>("");
+  // 日付と時間を別々に保持（ユーザーはdate/time入力、APIにはISO8601で渡す）
+  const [startDate, setStartDate] = useState<string>("");
+  const [startTime, setStartTime] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [endTime, setEndTime] = useState<string>("");
   const [payMethod, setPayMethod] = useState<PaymentMethod | null>(null);
   const [paying, setPaying] = useState(false);
+
+  // date + time からISO8601文字列を生成（両方そろっていない場合はundefined）
+  const buildIso = (dateStr: string, timeStr: string): string | undefined => {
+    if (!dateStr || !timeStr) return undefined;
+    const [year, month, day] = dateStr.split("-").map(Number);
+    const [hour, minute] = timeStr.split(":").map(Number);
+    if (!year || !month || !day || Number.isNaN(hour) || Number.isNaN(minute)) return undefined;
+    const d = new Date(year, month - 1, day, hour, minute, 0);
+    return d.toISOString();
+  };
 
   const fetchQuote = useCallback(async () => {
     if (!customerId) return;
     setLoading(true);
     setError(null);
     try {
+      const startDt = buildIso(startDate, startTime);
+      const endDt = buildIso(endDate, endTime);
       const res = await fetchCustomerQuote(customerId, {
         start_dt: startDt || undefined,
         end_dt: endDt || undefined,
@@ -38,7 +54,7 @@ const PaymentContent = () => {
     } finally {
       setLoading(false);
     }
-  }, [customerId, startDt, endDt]);
+  }, [customerId, startDate, startTime, endDate, endTime]);
 
   const fetchOrders = useCallback(async () => {
     if (!customerId) return;
@@ -52,6 +68,14 @@ const PaymentContent = () => {
   }, [customerId]);
 
   useEffect(() => {
+    // デフォルトで本日の日付をセット
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = (today.getMonth() + 1).toString().padStart(2, "0");
+    const dd = today.getDate().toString().padStart(2, "0");
+    setStartDate(`${yyyy}-${mm}-${dd}`);
+    setEndDate(`${yyyy}-${mm}-${dd}`);
+
     fetchQuote();
     fetchOrders();
   }, [fetchQuote, fetchOrders]);
@@ -65,8 +89,20 @@ const PaymentContent = () => {
   const formatMinutes = useCallback((s: string) => {
     const n = Number(s);
     if (Number.isNaN(n)) return `${s}分`;
-    // 少数分がある場合は最大2桁表示
-    return `${n.toLocaleString("ja-JP", { maximumFractionDigits: 2 })}分`;
+    const totalMinutes = Math.floor(n);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const seconds = Math.round((n - totalMinutes) * 60);
+
+    const parts: string[] = [];
+    if (hours > 0) parts.push(`${hours}時間`);
+    if (minutes > 0) parts.push(`${minutes}分`);
+    if (seconds > 0 && hours === 0) {
+      // 分単位メインなので、秒はおまけ的に。長時間の場合は省略。
+      parts.push(`${seconds}秒`);
+    }
+    if (parts.length === 0) return "0分";
+    return parts.join("");
   }, []);
 
   const toNumber = (s?: string | null) => {
@@ -117,27 +153,44 @@ const PaymentContent = () => {
               ← 戻る
             </Button>
             <h1 className="text-2xl font-semibold mb-4 text-foreground">会計画面</h1>
-            {customerId && (
+            {customerName && (
+              <p className="text-muted-foreground">
+                顧客: <span className="font-semibold text-foreground">{customerName}</span>
+              </p>
+            )}
+            {!customerName && customerId && (
               <p className="text-muted-foreground">顧客ID: {customerId}</p>
             )}
             <div className="mt-6 space-y-4">
               <div className="flex items-end gap-4">
                 <div className="flex flex-col">
-                  <label className="text-sm text-muted-foreground">開始時刻（ISO8601 任意）</label>
+                  <label className="text-sm text-muted-foreground">開始日 / 開始時刻（任意）</label>
                   <input
                     className="border border-border/50 bg-input/50 text-foreground rounded px-3 py-2 w-72"
-                    placeholder="例: 2025-11-19T10:00:00+09:00"
-                    value={startDt}
-                    onChange={(e) => setStartDt(e.target.value)}
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                  <input
+                    className="mt-2 border border-border/50 bg-input/50 text-foreground rounded px-3 py-2 w-40"
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
                   />
                 </div>
                 <div className="flex flex-col">
-                  <label className="text-sm text-muted-foreground">終了時刻（ISO8601 任意）</label>
+                  <label className="text-sm text-muted-foreground">終了日 / 終了時刻（任意）</label>
                   <input
                     className="border border-border/50 bg-input/50 text-foreground rounded px-3 py-2 w-72"
-                    placeholder="例: 2025-11-19T12:34:56+09:00"
-                    value={endDt}
-                    onChange={(e) => setEndDt(e.target.value)}
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                  <input
+                    className="mt-2 border border-border/50 bg-input/50 text-foreground rounded px-3 py-2 w-40"
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
                   />
                 </div>
                 <Button onClick={fetchQuote} disabled={!customerId || loading}>
@@ -149,18 +202,6 @@ const PaymentContent = () => {
               )}
               {data && (
                 <div className="space-y-6">
-                  <div className="surface-elevated border border-border/50 rounded p-4">
-                    <h2 className="text-lg font-medium mb-2 text-foreground">サマリ</h2>
-                    <div className="grid grid-cols-4 gap-2 text-sm">
-                      <div className="text-muted-foreground">実プレイ時間</div>
-                      <div className="text-foreground">{formatMinutes(data.played_minutes)}</div>
-                      <div className="text-muted-foreground">小計</div>
-                      <div className="font-semibold text-foreground">{formatCurrency(data.subtotal)}</div>
-                      <div></div>
-                      <div></div>
-                    </div>
-                  </div>
-
                   <div className="surface-elevated border border-border/50 rounded p-4">
                     <h2 className="text-lg font-medium mb-2 text-foreground">注文内訳</h2>
                     <div className="overflow-x-auto">
@@ -195,12 +236,18 @@ const PaymentContent = () => {
 
                   <div className="surface-elevated border border-border/50 rounded p-4">
                     <h2 className="text-lg font-medium mb-2 text-foreground">時間料金内訳</h2>
+                    <div className="mb-3 grid grid-cols-2 gap-2 text-sm">
+                      <div className="text-muted-foreground">実プレイ時間</div>
+                      <div className="text-foreground">{formatMinutes(data.played_minutes)}</div>
+                      <div className="text-muted-foreground">時間料金小計</div>
+                      <div className="font-semibold text-foreground">{formatCurrency(data.subtotal)}</div>
+                    </div>
                     <div className="overflow-x-auto">
                       <table className="min-w-full text-sm">
                         <thead>
                           <tr className="text-left text-muted-foreground border-b border-border">
                             <th className="py-2 pr-4">刻み（分）</th>
-                            <th className="py-2 pr-4">回数</th>
+                            <th className="py-2 pr-4">適用回数</th>
                             <th className="py-2 pr-4">単価</th>
                             <th className="py-2 pr-4">小計</th>
                           </tr>

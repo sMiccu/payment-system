@@ -125,62 +125,77 @@ export default function CategoryAdminPage() {
             {categoryError && <div className="text-sm text-destructive">{categoryError}</div>}
           </form>
 
-          <details className="mt-8">
-            <summary className="cursor-pointer select-none text-base font-medium text-foreground">カテゴリー一覧</summary>
-            <div className="mt-3 flex flex-col gap-2">
+          <details className="mt-8" open>
+            <summary className="cursor-pointer select-none text-base font-medium text-foreground mb-4">カテゴリー一覧</summary>
+            <div className="mt-3 flex flex-col gap-3">
               {isLoadingCategories && <div className="text-sm text-muted-foreground">読み込み中...</div>}
               {!isLoadingCategories && categories.length === 0 && (
                 <div className="text-sm text-muted-foreground">カテゴリがありません。</div>
               )}
               {!isLoadingCategories && categories.length > 0 && (
-                <>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
-                  <span className="flex-1">カテゴリー名</span>
-                  <span className="flex-1" />
-                </div>
-                <ul className="flex flex-col gap-2">
-                  {categories.map((c) => (
-                    <li key={c.id} className="flex items-center gap-2">
+                <div className="grid gap-3">
+                  {categories.map((c, idx) => (
+                    <div
+                      key={c.id}
+                      className={`bg-surface-elevated border border-border/50 rounded-lg p-4 transition-all duration-300 animate-slide-in-up ${
+                        !isUncategorized(c) ? "hover:border-primary/30" : ""
+                      }`}
+                      style={{ animationDelay: `${idx * 30}ms` }}
+                    >
                       {categoryEditId === c.id ? (
-                        <>
-                          <input
-                            className="border border-border/50 bg-input/50 text-foreground p-1 flex-1 rounded"
-                            value={categoryEditName}
-                            onChange={(e) => setCategoryEditName(e.target.value)}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => saveEditCategory(c.id)}
-                            disabled={categorySavingId === c.id}
-                            className="px-2 py-1 bg-primary hover:bg-primary/90 text-white rounded disabled:opacity-50"
-                          >
-                            保存
-                          </button>
-                          <button
-                            type="button"
-                            onClick={cancelEditCategory}
-                            className="px-2 py-1 border border-border hover:bg-muted rounded text-foreground"
-                          >
-                            キャンセル
-                          </button>
-                        </>
+                        <div className="flex flex-col gap-3">
+                          <div className="flex flex-col gap-2">
+                            <label className="text-xs text-muted-foreground">カテゴリー名</label>
+                            <input
+                              className="border border-border/50 bg-input/50 text-foreground px-3 py-2 rounded"
+                              value={categoryEditName}
+                              onChange={(e) => setCategoryEditName(e.target.value)}
+                              placeholder="カテゴリー名"
+                            />
+                          </div>
+                          <div className="flex gap-2 justify-end">
+                            <button
+                              type="button"
+                              onClick={cancelEditCategory}
+                              className="px-4 py-2 border border-border hover:bg-muted rounded text-foreground transition-colors"
+                            >
+                              キャンセル
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => saveEditCategory(c.id)}
+                              disabled={categorySavingId === c.id}
+                              className="px-4 py-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white rounded transition-opacity disabled:opacity-50"
+                            >
+                              {categorySavingId === c.id ? "保存中..." : "保存"}
+                            </button>
+                          </div>
+                        </div>
                       ) : (
-                        <>
-                          <span className="flex-1 text-foreground">{c.name}</span>
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                              {c.name}
+                              {isUncategorized(c) && (
+                                <span className="text-xs px-2 py-1 bg-muted/50 text-muted-foreground rounded">
+                                  システム
+                                </span>
+                              )}
+                            </h3>
+                          </div>
                           <button
                             type="button"
                             onClick={() => startEditCategory(c)}
                             disabled={isUncategorized(c)}
-                            className="px-2 py-1 border border-border hover:bg-muted rounded text-foreground disabled:opacity-50"
+                            className="px-4 py-2 border border-border hover:bg-muted hover:border-primary/50 rounded text-foreground transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                           >
                             編集
                           </button>
-                        </>
+                        </div>
                       )}
-                    </li>
+                    </div>
                   ))}
-                </ul>
-                </>
+                </div>
               )}
             </div>
           </details>

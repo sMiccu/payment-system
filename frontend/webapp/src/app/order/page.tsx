@@ -11,6 +11,7 @@ const OrderContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const customerId = searchParams.get("customerId");
+  const customerName = searchParams.get("customerName");
   const [menus, setMenus] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -122,7 +123,14 @@ const OrderContent = () => {
               ← 戻る
             </Button>
             <h1 className="text-2xl font-semibold mb-4 text-foreground">注文画面</h1>
-            {customerId && <p className="text-muted-foreground">顧客ID: {customerId}</p>}
+            {customerName && (
+              <p className="text-muted-foreground">
+                顧客: <span className="font-semibold text-foreground">{customerName}</span>
+              </p>
+            )}
+            {!customerName && customerId && (
+              <p className="text-muted-foreground">顧客ID: {customerId}</p>
+            )}
             {error && <div className="text-destructive text-sm mb-3">{error}</div>}
 
             <div className="grid grid-cols-3 gap-6">

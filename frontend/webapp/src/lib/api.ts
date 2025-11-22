@@ -10,14 +10,15 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}) {
     ...options,
   });
   if (res.status === 401) {
-    // 一度だけサイレントrefresh
-    const r = await fetch(`${base}/refresh/`, {
+    // 一度だけサイレントrefresh（Cookieに入っているrefreshトークンを使用）
+    const refreshRes = await fetch(`${base}control/api/refresh/`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({}), // Cookieのrefreshを使う
     });
-    if (r.ok) {
+    if (refreshRes.ok) {
+      // refreshに成功したら、同じリクエストをもう一度実行
       return apiFetch<T>(path, options);
     }
   }

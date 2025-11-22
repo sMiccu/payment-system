@@ -170,91 +170,104 @@ export default function MenuAdminPage() {
             </button>
           </form>
 
-          <details className="mt-8">
-            <summary className="cursor-pointer select-none text-base font-medium text-foreground">メニュー一覧</summary>
-            <div className="mt-3 flex flex-col gap-2">
+          <details className="mt-8" open>
+            <summary className="cursor-pointer select-none text-base font-medium text-foreground mb-4">メニュー一覧</summary>
+            <div className="mt-3 flex flex-col gap-3">
               {isLoadingMenus && <div className="text-sm text-muted-foreground">読み込み中...</div>}
               {!isLoadingMenus && menus.length === 0 && (
                 <div className="text-sm text-muted-foreground">メニューがありません。</div>
               )}
               {!isLoadingMenus && menus.length > 0 && (
-                <>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
-                  <span className="flex-1">メニュー名</span>
-                  <span className="w-24 text-right">価格</span>
-                  <span className="w-28 text-center">カテゴリー</span>
-                  <span className="w-20 text-center"></span>
-                </div>
-                <ul className="flex flex-col gap-2">
-                  {menus.map((m) => (
-                    <li key={m.id} className="flex items-center gap-2">
+                <div className="grid gap-3">
+                  {menus.map((m, idx) => (
+                    <div
+                      key={m.id}
+                      className="bg-surface-elevated border border-border/50 rounded-lg p-4 hover:border-primary/30 transition-all duration-300 animate-slide-in-up"
+                      style={{ animationDelay: `${idx * 30}ms` }}
+                    >
                       {menuEditId === m.id ? (
-                        <>
-                          <input
-                            className="border border-border/50 bg-input/50 text-foreground p-1 flex-1 rounded"
-                            value={menuEdit.name}
-                            onChange={(e) => setMenuEdit({ ...menuEdit, name: e.target.value })}
-                            placeholder="メニュー名"
-                          />
-                          <input
-                            type="number"
-                            className="border border-border/50 bg-input/50 text-foreground p-1 w-28 rounded"
-                            value={Number.isFinite(menuEdit.price) ? menuEdit.price : 0}
-                            onChange={(e) => setMenuEdit({ ...menuEdit, price: e.target.valueAsNumber })}
-                            placeholder="価格"
-                          />
-                          <select
-                            className="border border-border/50 bg-input/50 text-foreground p-1 rounded"
-                            value={menuEdit.category_id ?? ""}
-                            onChange={(e) =>
-                              setMenuEdit({
-                                ...menuEdit,
-                                category_id: e.target.value === "" ? null : Number(e.target.value),
-                              })
-                            }
-                          >
-                            <option value="">（未分類）</option>
-                            {categories.map((c) => (
-                              <option key={c.id} value={c.id}>
-                                {c.name}
-                              </option>
-                            ))}
-                          </select>
-                          <button
-                            type="button"
-                            onClick={() => saveEditMenu(m.id)}
-                            className="px-2 py-1 bg-primary hover:bg-primary/90 text-white rounded"
-                          >
-                            保存
-                          </button>
-                          <button
-                            type="button"
-                            onClick={cancelEditMenu}
-                            className="px-2 py-1 border border-border hover:bg-muted rounded text-foreground"
-                          >
-                            キャンセル
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <span className="flex-1 text-foreground">{m.name}</span>
-                          <span className="w-24 text-right text-foreground">{m.price}</span>
-                          <span className="w-28 text-center text-muted-foreground">{m.category_name || "未分類"}</span>
-                          <span className="w-20 text-center">
+                        <div className="flex flex-col gap-3">
+                          <div className="flex flex-col gap-2">
+                            <label className="text-xs text-muted-foreground">メニュー名</label>
+                            <input
+                              className="border border-border/50 bg-input/50 text-foreground px-3 py-2 rounded"
+                              value={menuEdit.name}
+                              onChange={(e) => setMenuEdit({ ...menuEdit, name: e.target.value })}
+                              placeholder="メニュー名"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="flex flex-col gap-2">
+                              <label className="text-xs text-muted-foreground">価格</label>
+                              <input
+                                type="number"
+                                className="border border-border/50 bg-input/50 text-foreground px-3 py-2 rounded"
+                                value={Number.isFinite(menuEdit.price) ? menuEdit.price : 0}
+                                onChange={(e) => setMenuEdit({ ...menuEdit, price: e.target.valueAsNumber })}
+                                placeholder="価格"
+                              />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                              <label className="text-xs text-muted-foreground">カテゴリー</label>
+                              <select
+                                className="border border-border/50 bg-input/50 text-foreground px-3 py-2 rounded"
+                                value={menuEdit.category_id ?? ""}
+                                onChange={(e) =>
+                                  setMenuEdit({
+                                    ...menuEdit,
+                                    category_id: e.target.value === "" ? null : Number(e.target.value),
+                                  })
+                                }
+                              >
+                                <option value="">（未分類）</option>
+                                {categories.map((c) => (
+                                  <option key={c.id} value={c.id}>
+                                    {c.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 justify-end">
                             <button
                               type="button"
-                              onClick={() => startEditMenu(m)}
-                              className="px-2 py-1 border border-border hover:bg-muted rounded text-foreground"
+                              onClick={cancelEditMenu}
+                              className="px-4 py-2 border border-border hover:bg-muted rounded text-foreground transition-colors"
                             >
-                              編集
+                              キャンセル
                             </button>
-                          </span>
-                        </>
+                            <button
+                              type="button"
+                              onClick={() => saveEditMenu(m.id)}
+                              className="px-4 py-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white rounded transition-opacity"
+                            >
+                              保存
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-foreground mb-1">{m.name}</h3>
+                            <div className="flex items-center gap-4 text-sm">
+                              <span className="text-primary font-medium text-lg">¥{m.price.toLocaleString()}</span>
+                              <span className="px-2 py-1 bg-muted/50 text-muted-foreground rounded text-xs">
+                                {m.category_name || "未分類"}
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => startEditMenu(m)}
+                            className="px-4 py-2 border border-border hover:bg-muted hover:border-primary/50 rounded text-foreground transition-all"
+                          >
+                            編集
+                          </button>
+                        </div>
                       )}
-                    </li>
+                    </div>
                   ))}
-                </ul>
-                </>
+                </div>
               )}
             </div>
           </details>
