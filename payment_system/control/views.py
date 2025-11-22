@@ -45,8 +45,15 @@ class DailyStoreSalesViewSet(viewsets.ModelViewSet):
     serializer_class = DailyStoreSalesSerializer
 
 class DurationRateViewSet(viewsets.ModelViewSet):
-    queryset = DurationRate.objects.all()
     serializer_class = DurationRateSerializer
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            return DurationRate.objects.none()
+        return DurationRate.objects.filter(store=user.store).order_by("minutes")
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(store=getattr(user, "store", None))
 
 class CookieTokenObtainPairView(TokenObtainPairView):
     # permission_classes = [AllowAny]

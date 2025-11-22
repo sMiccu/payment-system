@@ -48,7 +48,7 @@ const Page: NextPage = () => {
   async function onSubmit(values: LoginForm) {
     setError("");
     try {
-      await apiFetch("/login/", {
+      await apiFetch("/control/api/login/", {
         method: "POST",
         body: JSON.stringify(values),
       });
