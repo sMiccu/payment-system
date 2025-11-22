@@ -178,6 +178,13 @@ export default function MenuAdminPage() {
                 <div className="text-sm text-gray-600">メニューがありません。</div>
               )}
               {!isLoadingMenus && menus.length > 0 && (
+                <>
+                <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
+                  <span className="flex-1">メニュー名</span>
+                  <span className="w-24 text-right">価格</span>
+                  <span className="w-28 text-center">カテゴリー</span>
+                  <span className="w-20 text-center"></span>
+                </div>
                 <ul className="flex flex-col gap-2">
                   {menus.map((m) => (
                     <li key={m.id} className="flex items-center gap-2">
@@ -233,18 +240,21 @@ export default function MenuAdminPage() {
                           <span className="flex-1">{m.name}</span>
                           <span className="w-24 text-right">{m.price}</span>
                           <span className="w-28 text-center">{m.category_name || "未分類"}</span>
-                          <button
-                            type="button"
-                            onClick={() => startEditMenu(m)}
-                            className="px-2 py-1 border rounded"
-                          >
-                            編集
-                          </button>
+                          <span className="w-20 text-center">
+                            <button
+                              type="button"
+                              onClick={() => startEditMenu(m)}
+                              className="px-2 py-1 border rounded"
+                            >
+                              編集
+                            </button>
+                          </span>
                         </>
                       )}
                     </li>
                   ))}
                 </ul>
+                </>
               )}
             </div>
           </details>
