@@ -19,7 +19,8 @@ class OrderItem(models.Model):
     """注文明細（個別商品の情報）"""
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='orderitem')
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='orderitem')
-    quantity = models.PositiveIntegerField(default=1)
+    # キャンセル用に負数も扱うため IntegerField にする
+    quantity = models.IntegerField(default=1)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -6,15 +6,39 @@ from menu.models import Menu
 from django.db import transaction
 from decimal import Decimal
 
-class OrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        fields = ['id', 'customer', 'total_amount']
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    """
+    注文履歴表示用の明細シリアライザ
+    """
+    # モデル上に menu_id フィールドが自動で存在するため source 指定は不要
+    menu_id = serializers.IntegerField(read_only=True)
+    menu_name = serializers.CharField(source='menu.name', read_only=True)
+    menu_price = serializers.IntegerField(source='menu.price', read_only=True)
+
     class Meta:
         model = OrderItem
-        fields = ['id', 'order', 'menu', 'quantity', 'subtotal']
+        fields = [
+            'id',
+            'order',
+            'menu',
+            'menu_id',
+            'menu_name',
+            'menu_price',
+            'quantity',
+            'subtotal',
+        ]
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    """
+    注文履歴用の注文シリアライザ
+    """
+    items = OrderItemSerializer(source='orderitem', many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ['id', 'customer', 'total_amount', 'created_at', 'items']
 
 class OrderCreateItemSerializer(serializers.Serializer):
     menu_id = serializers.IntegerField()
