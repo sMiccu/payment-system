@@ -86,6 +86,36 @@ export async function createOrder(payload: { customer_id: number; items: CreateO
   });
 }
 
+// ====== Order history & cancel items ======
+export type OrderHistoryItem = {
+  id: number;
+  total_amount: string;
+  created_at: string;
+  items: {
+    id: number;
+    menu_id: number;
+    menu_name: string;
+    menu_price: number;
+    quantity: number;
+    subtotal: string;
+  }[];
+};
+
+export async function fetchOrderHistory(customerId: string): Promise<OrderHistoryItem[]> {
+  const path = `order/api/order/?customer_id=${encodeURIComponent(customerId)}`;
+  return apiFetch<OrderHistoryItem[]>(path);
+}
+
+export async function cancelOrderItems(
+  orderId: number,
+  items: { order_item_id: number; cancel_quantity: number }[],
+): Promise<void> {
+  await apiFetch(`order/api/order/${orderId}/cancel-items/`, {
+    method: 'POST',
+    body: JSON.stringify({ items }),
+  });
+}
+
 // ====== Payment summary & checkout ======
 export type PaymentOrderItem = {
   menu_id: number;
