@@ -74,9 +74,10 @@ const CustomerRegisterPage: NextPage = () => {
   const [searchError, setSearchError] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [memberships, setMemberships] = useState<
-    { id: number; first_name: string; last_name: string; phone_number?: string }[]
+    { id: number; first_name: string; last_name: string; phone_number?: string; register_date?: string; is_expired?: boolean }[]
   >([]);
   const [selectedMembershipId, setSelectedMembershipId] = useState<number | null>(null);
+  const [isUpdating, setIsUpdating] = useState<Record<number, boolean>>({});
 
   const form = useForm<CustomerForm>({
     resolver: zodResolver(customerSchema),
@@ -153,6 +154,31 @@ const CustomerRegisterPage: NextPage = () => {
   function handleSelect(m: { id: number; first_name: string; last_name: string }) {
     setSelectedMembershipId(m.id);
     form.setValue("name", `${m.last_name} ${m.first_name}`, { shouldValidate: true, shouldDirty: true });
+  }
+
+  async function handleUpdateRegisterDate(membershipId: number) {
+    const confirmed = window.confirm("会員情報を更新してもよろしいですか？\n登録日が本日の日付に更新されます。");
+    if (!confirmed) {
+      return;
+    }
+
+    setIsUpdating((prev) => ({ ...prev, [membershipId]: true }));
+    try {
+      await apiFetch(`/customer/api/membership/${membershipId}/update-register-date/`, {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+      
+      // 検索結果を再取得して更新
+      await handleSearch();
+      
+      // 成功メッセージ（オプション）
+      alert("会員情報が更新されました。");
+    } catch (e) {
+      setSearchError("会員情報の更新に失敗しました。もう一度お試しください。");
+    } finally {
+      setIsUpdating((prev) => ({ ...prev, [membershipId]: false }));
+    }
   }
 
   return (
@@ -246,18 +272,35 @@ const CustomerRegisterPage: NextPage = () => {
                       <div className="border border-border/50 bg-muted/30 rounded p-3 space-y-2">
                         {memberships.map((m) => (
                           <div key={m.id} className="flex items-center justify-between p-2 bg-card/50 rounded">
-                            <div className="text-sm">
+                            <div className="text-sm flex-1">
                               <div className="text-foreground">{m.last_name} {m.first_name}</div>
                               {m.phone_number && <div className="text-muted-foreground">{m.phone_number}</div>}
+                              {m.is_expired && (
+                                <div className="text-destructive text-xs mt-1 font-semibold">
+                                  ⚠️ 会員情報の更新が必要です
+                                </div>
+                              )}
                             </div>
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant={selectedMembershipId === m.id ? "default" : "secondary"}
-                              onClick={() => handleSelect(m)}
-                            >
-                              {selectedMembershipId === m.id ? "選択中" : "選択"}
-                            </Button>
+                            {m.is_expired ? (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => handleUpdateRegisterDate(m.id)}
+                                disabled={isUpdating[m.id]}
+                              >
+                                {isUpdating[m.id] ? "更新中..." : "更新"}
+                              </Button>
+                            ) : (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant={selectedMembershipId === m.id ? "default" : "secondary"}
+                                onClick={() => handleSelect(m)}
+                              >
+                                {selectedMembershipId === m.id ? "選択中" : "選択"}
+                              </Button>
+                            )}
                           </div>
                         ))}
                       </div>

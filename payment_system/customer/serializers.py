@@ -19,7 +19,16 @@ class CustomerBreakSerializer(serializers.ModelSerializer):
         fields = ['id', 'customer', 'start_datetime', 'end_datetime']
 
 class MembershipSerializer(serializers.ModelSerializer):
+    is_expired = serializers.SerializerMethodField()
+    
     class Meta:
         model = Membership
-        fields = ['id', 'store', 'first_name', 'last_name', 'first_name_kana', 'last_name_kana', 'phone_number']
+        fields = ['id', 'store', 'first_name', 'last_name', 'first_name_kana', 'last_name_kana', 'phone_number', 'register_date', 'is_expired']
         read_only_fields = ['store']
+    
+    def get_is_expired(self, obj):
+        if not obj.register_date or not obj.store or not obj.store.expired_days:
+            return False
+        from datetime import date, timedelta
+        expiry_date = obj.register_date + timedelta(days=obj.store.expired_days)
+        return date.today() > expiry_date

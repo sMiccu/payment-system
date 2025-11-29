@@ -37,6 +37,8 @@ type MembershipSearchResult = {
   first_name: string;
   last_name: string;
   phone_number?: string;
+  register_date?: string;
+  is_expired?: boolean;
 };
 
 // 表示用の顧客データの型定義
@@ -81,6 +83,7 @@ const Page: NextPage = () => {
   const [membershipSearchError, setMembershipSearchError] = useState<Record<string, string | null>>({});
   const [membershipSearchLoading, setMembershipSearchLoading] = useState<Record<string, boolean>>({});
   const [membershipLinking, setMembershipLinking] = useState<Record<string, boolean>>({});
+  const [membershipUpdating, setMembershipUpdating] = useState<Record<number, boolean>>({});
 
   const toggleBreak = async (customerId: string, isBreaking: boolean) => {
     try {
@@ -365,6 +368,36 @@ const Page: NextPage = () => {
     },
     [fetchCustomerData],
   );
+
+  async function handleUpdateMembershipRegisterDate(customerId: string, membershipId: number) {
+    const confirmed = window.confirm(
+      "会員情報を更新してもよろしいですか？\n登録日が本日の日付に更新されます。"
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setMembershipUpdating((prev) => ({ ...prev, [membershipId]: true }));
+    try {
+      await apiFetch(`/customer/api/membership/${membershipId}/update-register-date/`, {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+
+      // 最新の有効期限状態を反映するため再検索
+      await handleMembershipSearch(customerId);
+
+      alert("会員情報を更新しました。");
+    } catch (e) {
+      setMembershipSearchError((prev) => ({
+        ...prev,
+        [customerId]: "会員情報の更新に失敗しました。もう一度お試しください。",
+      }));
+      console.error("Failed to update membership register_date:", e);
+    } finally {
+      setMembershipUpdating((prev) => ({ ...prev, [membershipId]: false }));
+    }
+  }
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -791,20 +824,45 @@ const Page: NextPage = () => {
                                     {m.phone_number}
                                   </div>
                                 )}
+                                {m.is_expired && (
+                                  <div className="text-destructive text-[11px] mt-1 font-semibold">
+                                    会員情報の更新が必要です
+                                  </div>
+                                )}
                               </div>
-                              <Button
-                                type="button"
-                                size="sm"
-                                className="px-3 py-1 text-xs"
-                                disabled={membershipLinking[customer.id]}
-                                onClick={() =>
-                                  handleLinkMembership(customer.id, m.id)
-                                }
-                              >
-                                {membershipLinking[customer.id]
-                                  ? "紐付け中..."
-                                  : "この会員に紐付け"}
-                              </Button>
+                              {m.is_expired ? (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  className="px-3 py-1 text-xs"
+                                  variant="destructive"
+                                  disabled={membershipUpdating[m.id]}
+                                  onClick={() =>
+                                    handleUpdateMembershipRegisterDate(
+                                      customer.id,
+                                      m.id,
+                                    )
+                                  }
+                                >
+                                  {membershipUpdating[m.id]
+                                    ? "更新中..."
+                                    : "更新"}
+                                </Button>
+                              ) : (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  className="px-3 py-1 text-xs"
+                                  disabled={membershipLinking[customer.id]}
+                                  onClick={() =>
+                                    handleLinkMembership(customer.id, m.id)
+                                  }
+                                >
+                                  {membershipLinking[customer.id]
+                                    ? "紐付け中..."
+                                    : "この会員に紐付け"}
+                                </Button>
+                              )}
                             </div>
                           ))}
                         </div>

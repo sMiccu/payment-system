@@ -232,7 +232,7 @@ const MembershipRegisterPage: NextPage = () => {
                     />
                   </div>
                 </CardContent>
-                <CardFooter className="flex flex-col space-y-2">
+                <CardFooter className="flex flex-col space-y-2 mt-6">
                   {error && <p className="text-destructive text-sm">{error}</p>}
                   <Button 
                     className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90" 

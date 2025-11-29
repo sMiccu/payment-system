@@ -228,3 +228,15 @@ class MembershipViewSet(viewsets.ModelViewSet):
         if not getattr(user, "store", None):
             raise ValidationError("店舗が未設定のユーザーです。")
         serializer.save(store=user.store)
+    
+    @action(detail=True, methods=['post'], url_path='update-register-date')
+    def update_register_date(self, request, pk=None):
+        """
+        会員のregister_dateを現在日付に更新する
+        """
+        membership = self.get_object()
+        from datetime import date
+        membership.register_date = date.today()
+        membership.save(update_fields=['register_date'])
+        serializer = self.get_serializer(membership)
+        return Response(serializer.data, status=status.HTTP_200_OK)

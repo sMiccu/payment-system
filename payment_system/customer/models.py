@@ -10,6 +10,7 @@ class Membership(models.Model):
     last_name_kana = models.CharField(max_length=100, null=True, blank=True)
     phone_number = PhoneNumberField(blank=True, null=True)
     store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True, related_name='membership')
+    register_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
