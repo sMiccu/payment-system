@@ -11,7 +11,7 @@ import { Users, UserCheck, Menu, FolderOpen, Clock } from "lucide-react"
 
 export function AppSidebar() {
   const menuItems = [
-    { href: "/top", label: "来店中のお客様一覧", icon: Users },
+    { href: "/top", label: "来店中のお客様", icon: Users },
     { href: "/membership-register", label: "会員管理", icon: UserCheck },
     { href: "/menu-admin", label: "メニュー管理", icon: Menu },
     { href: "/category-admin", label: "カテゴリー管理", icon: FolderOpen },
