@@ -530,19 +530,17 @@ const Page: NextPage = () => {
                       >
                         {expanded[customer.id] ? "▲" : "▼"}
                       </span>
-                      {customer.isMember && (
-                        <Star className="w-4 h-4 fill-primary text-primary animate-pulse" />
-                      )}
+                      <Star className={`w-4 h-4 fill-primary text-primary animate-pulse ${customer.isMember ? '' : 'invisible'}`} />
                       <span className="group-hover:text-primary transition-colors duration-200">{customer.name}</span>
                     </div>
                     <div className="flex-1 flex items-center gap-2 text-muted-foreground">
                       {customer.isBreaking ? (
-                        <span className="flex items-center gap-1 text-orange-400 animate-pulse">
+                        <span className="flex items-center gap-1 text-orange-400 animate-pulse w-24">
                           <Pause className="w-4 h-4" />
                           休憩中
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1 text-green-400">
+                        <span className="flex items-center gap-1 text-green-400 w-24">
                           <Play className="w-4 h-4 animate-pulse" />
                           プレイ中
                         </span>
