@@ -519,17 +519,17 @@ const Page: NextPage = () => {
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div
-                    className="surface-elevated rounded-lg p-4 flex items-center justify-between border border-border/50 hover:border-primary/50 transition-all duration-300 mb-3 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5 group"
+                    className="surface-elevated rounded-lg p-4 flex items-center justify-between border border-border/50 hover:border-primary/50 transition-all duration-300 mb-3 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5 group cursor-pointer"
+                    onClick={() => toggleExpand(customer.id)}
                   >
                     <div className="flex-1 flex items-center font-medium text-foreground gap-3">
-                      <button
-                        className="text-muted-foreground hover:text-primary transition-colors duration-200 hover:scale-110 transform"
-                        onClick={() => toggleExpand(customer.id)}
+                      <span
+                        className="text-muted-foreground group-hover:text-primary transition-colors duration-200"
                         aria-label="詳細を展開"
                         title="詳細を展開"
                       >
                         {expanded[customer.id] ? "▲" : "▼"}
-                      </button>
+                      </span>
                       {customer.isMember && (
                         <Star className="w-4 h-4 fill-primary text-primary animate-pulse" />
                       )}
@@ -553,19 +553,23 @@ const Page: NextPage = () => {
                       <Button
                         variant="secondary"
                         className="font-medium rounded-lg px-6 hover:scale-105 transition-transform duration-200"
-                        onClick={() => toggleBreak(customer.id, customer.isBreaking)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleBreak(customer.id, customer.isBreaking);
+                        }}
                       >
                         {customer.isBreaking ? "再開" : "停止"}
                       </Button>
                       <Button
                         className="bg-[var(--success)] hover:bg-[var(--success)]/90 text-white font-medium rounded-lg px-6 hover:scale-105 transition-transform duration-200 hover:shadow-lg hover:shadow-green-500/30"
-                        onClick={() =>
+                        onClick={(e) => {
+                          e.stopPropagation();
                           router.push(
                             `/order?customerId=${customer.id}&customerName=${encodeURIComponent(
                               customer.name,
                             )}`,
-                          )
-                        }
+                          );
+                        }}
                       >
                         注文
                       </Button>
@@ -573,13 +577,14 @@ const Page: NextPage = () => {
                         variant="destructive"
                         className="font-medium rounded-lg px-6 hover:scale-105 transition-transform duration-200 hover:shadow-lg hover:shadow-red-500/30"
                         disabled={!customer.isBreaking}
-                        onClick={() =>
+                        onClick={(e) => {
+                          e.stopPropagation();
                           router.push(
                             `/payment?customerId=${customer.id}&customerName=${encodeURIComponent(
                               customer.name,
                             )}`,
-                          )
-                        }
+                          );
+                        }}
                       >
                         会計
                       </Button>
