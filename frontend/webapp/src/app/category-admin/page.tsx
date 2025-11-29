@@ -1,6 +1,7 @@
 "use client"
 
 import { AppSidebar } from "../../components/layout/sidebar";
+import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api";
 import { useEffect, useState } from "react";
 
@@ -15,6 +16,7 @@ export default function CategoryAdminPage() {
   const [categoryEditId, setCategoryEditId] = useState<number | null>(null)
   const [categoryEditName, setCategoryEditName] = useState("")
   const [categorySavingId, setCategorySavingId] = useState<number | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const fetchCategories = async () => {
     setIsLoadingCategories(true)
@@ -50,6 +52,7 @@ export default function CategoryAdminPage() {
         return next
       })
       setNewCategoryName("")
+      setIsModalOpen(false)
       alert("カテゴリを登録しました ✅")
     } catch (err) {
       alert(err)
@@ -94,163 +97,172 @@ export default function CategoryAdminPage() {
     setCategoryEditName("")
   }
 
-  // 削除機能は無効化（ボタン/ロジックを削除）
-
   return (
     <div className="flex h-screen bg-background">
       <AppSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
-        <h1 className="text-2xl font-bold mb-6 text-foreground">カテゴリー管理</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-8rem)]">
-          {/* 左側：カテゴリー登録 */}
-          <div className="bg-surface-elevated border border-border/50 rounded-xl p-6 shadow-sm h-fit">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-foreground flex items-center gap-3 mb-2">
-                <svg className="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                新規登録
-              </h2>
-              <div className="h-1 w-full bg-gradient-to-r from-primary via-secondary to-transparent rounded-full opacity-30"></div>
-            </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                if (!isCreatingCategory) handleCreateCategory()
-              }}
-              className="flex flex-col gap-4"
+        <div className="max-w-6xl mx-auto pb-24">
+          {/* カテゴリー登録ボタン */}
+          <div className="mb-8 animate-slide-in-up">
+            <Button
+              className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 hover:scale-105 text-white font-medium text-base px-8 py-6 h-auto transition-all duration-300 shadow-lg hover:shadow-primary/50"
+              size="lg"
+              onClick={() => setIsModalOpen(true)}
             >
-              <input
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-                placeholder="カテゴリ名"
-                className="border border-border/50 bg-input/50 text-foreground p-2 rounded"
-              />
-              <button
-                type="submit"
-                disabled={isCreatingCategory}
-                className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white p-2.5 rounded-lg font-medium shadow-md disabled:opacity-50"
-              >
-                登録
-              </button>
-              {categoryError && <div className="text-sm text-destructive">{categoryError}</div>}
-            </form>
+              カテゴリー登録
+            </Button>
           </div>
 
-          {/* 真ん中：カテゴリー一覧 */}
-          <div className="bg-surface-elevated border border-border/50 rounded-xl p-6 shadow-sm flex flex-col overflow-hidden">
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-2">
-                <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
-                  <svg className="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                  </svg>
-                  一覧
-                </h2>
-                {!isLoadingCategories && (
-                  <span className="px-3 py-1 bg-gradient-to-r from-primary/10 to-secondary/10 text-primary font-semibold rounded-full text-sm">
-                    {categories.length} 件
-                  </span>
-                )}
-              </div>
-              <div className="h-1 w-full bg-gradient-to-r from-primary via-secondary to-transparent rounded-full opacity-30"></div>
-            </div>
-
-            <div className="flex flex-col gap-3 overflow-y-auto pr-2">
-              {isLoadingCategories && (
-                <div className="flex items-center justify-center py-12">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary/30 border-t-primary"></div>
-                    <p className="text-sm text-muted-foreground">読み込み中...</p>
-                  </div>
-                </div>
-              )}
-              {!isLoadingCategories && categories.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-16 px-4">
-                  <div className="w-20 h-20 rounded-full bg-muted/30 flex items-center justify-center mb-4">
-                    <svg className="w-10 h-10 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                    </svg>
-                  </div>
-                  <p className="text-base text-muted-foreground mb-1">カテゴリーがありません</p>
-                  <p className="text-sm text-muted-foreground/70">上のフォームから新しいカテゴリーを追加してください</p>
-                </div>
-              )}
-              {!isLoadingCategories && categories.length > 0 && (
-                <div className="grid gap-3">
-                  {categories.map((c, idx) => (
-                    <div
-                      key={c.id}
-                      className={`bg-surface-elevated border border-border/50 rounded-xl p-5 transition-all duration-300 animate-slide-in-up ${
-                        !isUncategorized(c) ? "hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5" : ""
-                      }`}
-                      style={{ animationDelay: `${idx * 30}ms` }}
-                    >
-                      {categoryEditId === c.id ? (
-                        <div className="flex flex-col gap-3">
-                          <div className="flex flex-col gap-2">
-                            <label className="text-xs font-medium text-muted-foreground">カテゴリー名</label>
-                            <input
-                              className="border border-border/50 bg-input/50 text-foreground px-3 py-2 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                              value={categoryEditName}
-                              onChange={(e) => setCategoryEditName(e.target.value)}
-                              placeholder="カテゴリー名"
-                            />
-                          </div>
-                          <div className="flex gap-2 justify-end pt-2">
-                            <button
-                              type="button"
-                              onClick={cancelEditCategory}
-                              className="px-4 py-2 border border-border hover:bg-muted rounded-lg text-foreground transition-colors"
-                            >
-                              キャンセル
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => saveEditCategory(c.id)}
-                              disabled={categorySavingId === c.id}
-                              className="px-4 py-2 bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white rounded-lg transition-opacity disabled:opacity-50 shadow-md"
-                            >
-                              {categorySavingId === c.id ? "保存中..." : "保存"}
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-                              {c.name}
-                              {isUncategorized(c) && (
-                                <span className="text-xs px-2.5 py-1 bg-gradient-to-r from-muted/60 to-muted/40 text-muted-foreground rounded-full font-medium">
-                                  システム
-                                </span>
-                              )}
-                            </h3>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => startEditCategory(c)}
-                            disabled={isUncategorized(c)}
-                            className="px-5 py-2.5 border border-border hover:bg-muted hover:border-primary/50 rounded-lg text-foreground transition-all disabled:opacity-30 disabled:cursor-not-allowed font-medium"
-                          >
-                            編集
-                          </button>
-                        </div>
-                      )}
+          {/* カテゴリー一覧 */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold mb-4 text-foreground animate-slide-in-left">一覧</h2>
+            {isLoadingCategories ? (
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className="h-20 surface-elevated rounded-lg border border-border/50 animate-pulse"
+                  >
+                    <div className="h-full p-4 flex items-center gap-4">
+                      <div className="h-4 bg-muted/30 rounded w-1/4 animate-shimmer"></div>
+                      <div className="ml-auto flex gap-2">
+                        <div className="h-8 w-16 bg-muted/30 rounded"></div>
+                      </div>
                     </div>
-                  ))}
+                  </div>
+                ))}
+              </div>
+            ) : categories.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground animate-fade-in">
+                カテゴリーがありません
+              </div>
+            ) : (
+              categories.map((c, index) => (
+                <div 
+                  key={c.id} 
+                  className="animate-slide-in-up"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div
+                    className="surface-elevated rounded-lg p-4 border border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5 group"
+                  >
+                    {categoryEditId === c.id ? (
+                      <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-2">
+                          <label className="text-xs font-medium text-muted-foreground">カテゴリー名</label>
+                          <input
+                            className="border border-border/50 bg-input/50 text-foreground px-3 py-2 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                            value={categoryEditName}
+                            onChange={(e) => setCategoryEditName(e.target.value)}
+                            placeholder="カテゴリー名"
+                          />
+                        </div>
+                        <div className="flex gap-2 justify-end pt-2">
+                          <Button
+                            type="button"
+                            onClick={cancelEditCategory}
+                            variant="secondary"
+                            className="font-medium rounded-lg px-6"
+                          >
+                            キャンセル
+                          </Button>
+                          <Button
+                            type="button"
+                            onClick={() => saveEditCategory(c.id)}
+                            disabled={categorySavingId === c.id}
+                            className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-medium rounded-lg px-6"
+                          >
+                            {categorySavingId === c.id ? "保存中..." : "保存"}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 flex items-center gap-4">
+                          <span className="text-foreground font-medium group-hover:text-primary transition-colors duration-200">
+                            {c.name}
+                          </span>
+                          {isUncategorized(c) && (
+                            <span className="px-3 py-1 bg-muted/50 text-muted-foreground rounded-full text-xs font-medium">
+                              システム
+                            </span>
+                          )}
+                        </div>
+                        <Button
+                          variant="secondary"
+                          className="font-medium rounded-lg px-6"
+                          onClick={() => startEditCategory(c)}
+                          disabled={isUncategorized(c)}
+                        >
+                          編集
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
-            </div>
-          </div>
-
-          {/* 右側：空 */}
-          <div className="hidden lg:block">
-            {/* 将来的に機能を追加する場合はここに配置 */}
+              ))
+            )}
           </div>
         </div>
+
+        {/* モーダル */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fade-in" onClick={() => setIsModalOpen(false)}>
+            <div 
+              className="bg-background border border-border rounded-xl p-6 max-w-md w-full shadow-2xl animate-slide-in-up" 
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-foreground">カテゴリー登録</h2>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="閉じる"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  if (!isCreatingCategory) handleCreateCategory()
+                }}
+                className="flex flex-col gap-4"
+              >
+                <div>
+                  <label className="block text-sm font-medium text-muted-foreground mb-1">カテゴリー名</label>
+                  <input
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    placeholder="カテゴリ名"
+                    className="w-full border border-border/50 bg-input/50 text-foreground p-2 rounded-lg"
+                  />
+                </div>
+                {categoryError && <div className="text-sm text-destructive">{categoryError}</div>}
+                <div className="flex gap-2 justify-end pt-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => setIsModalOpen(false)}
+                    className="font-medium rounded-lg px-6"
+                  >
+                    キャンセル
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isCreatingCategory}
+                    className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-medium rounded-lg px-6"
+                  >
+                    {isCreatingCategory ? "登録中..." : "登録"}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   )
 }
-
