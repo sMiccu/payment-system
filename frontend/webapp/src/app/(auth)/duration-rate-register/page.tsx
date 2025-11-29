@@ -1,12 +1,12 @@
 "use client"
-
+ 
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AppSidebar } from "../../components/layout/sidebar"
 import { Button } from "@/components/ui/button"
 import { apiFetch } from "@/lib/api"
 import { useEffect, useState } from "react"
+import { useToast } from "@/components/layout/ToastProvider"
 
 const schema = z.object({
   minutes: z.number().min(0, "0以上で入力してください"),
@@ -33,6 +33,7 @@ export default function DurationRateRegisterPage() {
     general_price: undefined,
   })
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { showToast } = useToast()
 
   const fetchRates = async () => {
     setLoadingRates(true)
@@ -67,7 +68,7 @@ export default function DurationRateRegisterPage() {
         method: "POST",
         body: JSON.stringify(values),
       })
-      alert("時間料金を登録しました ✅")
+      showToast("時間料金を登録しました ✅", "success")
       reset()
       setIsModalOpen(false)
       await fetchRates()
@@ -80,12 +81,10 @@ export default function DurationRateRegisterPage() {
   }
 
   return (
-    <div className="flex h-screen bg-background">
-      <AppSidebar />
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="max-w-6xl mx-auto pb-24">
-          {/* 時間料金登録ボタン */}
-          <div className="mb-8 animate-slide-in-up">
+    <>
+      <div className="max-w-6xl mx-auto pb-24">
+        {/* 時間料金登録ボタン */}
+        <div className="mb-8 animate-slide-in-up">
             <Button
               className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 hover:scale-105 text-white font-medium text-base px-8 py-6 h-auto transition-all duration-300 shadow-lg hover:shadow-primary/50"
               size="lg"
@@ -93,10 +92,10 @@ export default function DurationRateRegisterPage() {
             >
               時間料金登録
             </Button>
-          </div>
+        </div>
 
           {/* 時間料金一覧 */}
-          <div className="space-y-4">
+        <div className="space-y-4">
             <h2 className="text-xl font-semibold mb-4 text-foreground animate-slide-in-left">一覧</h2>
             {loadingRates ? (
               <div className="space-y-3">
@@ -215,7 +214,7 @@ export default function DurationRateRegisterPage() {
                                 edit.membership_price === undefined ||
                                 edit.general_price === undefined
                               ) {
-                                alert("すべての値を入力してください")
+                                showToast("すべての値を入力してください", "error")
                                 return
                               }
                               try {
@@ -229,9 +228,13 @@ export default function DurationRateRegisterPage() {
                                 })
                                 setEditId(null)
                                 await fetchRates()
-                                alert("時間料金を更新しました ✅")
-                              } catch (e) {
-                                alert(e)
+                                showToast("時間料金を更新しました ✅", "success")
+                              } catch (e: unknown) {
+                                const msg =
+                                  e instanceof Error
+                                    ? e.message
+                                    : "時間料金の更新に失敗しました"
+                                showToast(msg, "error")
                               }
                             }}
                             className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-medium rounded-lg px-6"
@@ -282,160 +285,164 @@ export default function DurationRateRegisterPage() {
                 </div>
               ))
             )}
+        </div>
+      </div>
+
+      {/* モーダル */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fade-in"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="bg-background border border-border rounded-xl p-6 max-w-md w-full shadow-2xl animate-slide-in-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-foreground">時間料金登録</h2>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="閉じる"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">経過時間（分）</label>
+                <Controller
+                  name="minutes"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <>
+                      <input
+                        type="number"
+                        step="1"
+                        min="0"
+                        inputMode="numeric"
+                        className="w-full border border-border/50 bg-input/50 text-foreground p-2 rounded-lg"
+                        name={field.name}
+                        onBlur={field.onBlur}
+                        ref={field.ref}
+                        value={toDisplayValue(field.value)}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          if (v === "") {
+                            field.onChange(undefined);
+                          } else {
+                            const n = Number.parseInt(v, 10);
+                            field.onChange(Number.isNaN(n) ? undefined : n);
+                          }
+                        }}
+                        placeholder="例: 30"
+                      />
+                      {fieldState.error && (
+                        <p className="text-sm text-destructive mt-1">{fieldState.error.message}</p>
+                      )}
+                    </>
+                  )}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">会員価格（税抜）</label>
+                <Controller
+                  name="membership_price"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <>
+                      <input
+                        type="number"
+                        step="1"
+                        min="0"
+                        inputMode="numeric"
+                        className="w-full border border-border/50 bg-input/50 text-foreground p-2 rounded-lg"
+                        name={field.name}
+                        onBlur={field.onBlur}
+                        ref={field.ref}
+                        value={toDisplayValue(field.value)}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          if (v === "") {
+                            field.onChange(undefined);
+                          } else {
+                            const n = Number.parseInt(v, 10);
+                            field.onChange(Number.isNaN(n) ? undefined : n);
+                          }
+                        }}
+                        placeholder="例: 500"
+                      />
+                      {fieldState.error && (
+                        <p className="text-sm text-destructive mt-1">{fieldState.error.message}</p>
+                      )}
+                    </>
+                  )}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">非会員価格（税抜）</label>
+                <Controller
+                  name="general_price"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <>
+                      <input
+                        type="number"
+                        step="1"
+                        min="0"
+                        inputMode="numeric"
+                        className="w-full border border-border/50 bg-input/50 text-foreground p-2 rounded-lg"
+                        name={field.name}
+                        onBlur={field.onBlur}
+                        ref={field.ref}
+                        value={toDisplayValue(field.value)}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          if (v === "") {
+                            field.onChange(undefined);
+                          } else {
+                            const n = Number.parseInt(v, 10);
+                            field.onChange(Number.isNaN(n) ? undefined : n);
+                          }
+                        }}
+                        placeholder="例: 700"
+                      />
+                      {fieldState.error && (
+                        <p className="text-sm text-destructive mt-1">{fieldState.error.message}</p>
+                      )}
+                    </>
+                  )}
+                />
+              </div>
+
+              {error && <div className="text-sm text-destructive">{error}</div>}
+              <div className="flex gap-2 justify-end pt-2">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setIsModalOpen(false)}
+                  className="font-medium rounded-lg px-6"
+                >
+                  キャンセル
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-medium rounded-lg px-6"
+                >
+                  {submitting ? "登録中..." : "登録"}
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
-
-        {/* モーダル */}
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fade-in" onClick={() => setIsModalOpen(false)}>
-            <div 
-              className="bg-background border border-border rounded-xl p-6 max-w-md w-full shadow-2xl animate-slide-in-up" 
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-foreground">時間料金登録</h2>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="閉じる"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-1">経過時間（分）</label>
-                  <Controller
-                    name="minutes"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <>
-                        <input
-                          type="number"
-                          step="1"
-                          min="0"
-                          inputMode="numeric"
-                          className="w-full border border-border/50 bg-input/50 text-foreground p-2 rounded-lg"
-                          name={field.name}
-                          onBlur={field.onBlur}
-                          ref={field.ref}
-                          value={toDisplayValue(field.value)}
-                          onChange={(e) => {
-                            const v = e.target.value;
-                            if (v === "") {
-                              field.onChange(undefined);
-                            } else {
-                              const n = Number.parseInt(v, 10);
-                              field.onChange(Number.isNaN(n) ? undefined : n);
-                            }
-                          }}
-                          placeholder="例: 30"
-                        />
-                        {fieldState.error && (
-                          <p className="text-sm text-destructive mt-1">{fieldState.error.message}</p>
-                        )}
-                      </>
-                    )}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-1">会員価格（税抜）</label>
-                  <Controller
-                    name="membership_price"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <>
-                        <input
-                          type="number"
-                          step="1"
-                          min="0"
-                          inputMode="numeric"
-                          className="w-full border border-border/50 bg-input/50 text-foreground p-2 rounded-lg"
-                          name={field.name}
-                          onBlur={field.onBlur}
-                          ref={field.ref}
-                          value={toDisplayValue(field.value)}
-                          onChange={(e) => {
-                            const v = e.target.value;
-                            if (v === "") {
-                              field.onChange(undefined);
-                            } else {
-                              const n = Number.parseInt(v, 10);
-                              field.onChange(Number.isNaN(n) ? undefined : n);
-                            }
-                          }}
-                          placeholder="例: 500"
-                        />
-                        {fieldState.error && (
-                          <p className="text-sm text-destructive mt-1">{fieldState.error.message}</p>
-                        )}
-                      </>
-                    )}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-1">非会員価格（税抜）</label>
-                  <Controller
-                    name="general_price"
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <>
-                        <input
-                          type="number"
-                          step="1"
-                          min="0"
-                          inputMode="numeric"
-                          className="w-full border border-border/50 bg-input/50 text-foreground p-2 rounded-lg"
-                          name={field.name}
-                          onBlur={field.onBlur}
-                          ref={field.ref}
-                          value={toDisplayValue(field.value)}
-                          onChange={(e) => {
-                            const v = e.target.value;
-                            if (v === "") {
-                              field.onChange(undefined);
-                            } else {
-                              const n = Number.parseInt(v, 10);
-                              field.onChange(Number.isNaN(n) ? undefined : n);
-                            }
-                          }}
-                          placeholder="例: 700"
-                        />
-                        {fieldState.error && (
-                          <p className="text-sm text-destructive mt-1">{fieldState.error.message}</p>
-                        )}
-                      </>
-                    )}
-                  />
-                </div>
-
-                {error && <div className="text-sm text-destructive">{error}</div>}
-                <div className="flex gap-2 justify-end pt-2">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => setIsModalOpen(false)}
-                    className="font-medium rounded-lg px-6"
-                  >
-                    キャンセル
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={submitting}
-                    className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-medium rounded-lg px-6"
-                  >
-                    {submitting ? "登録中..." : "登録"}
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-      </main>
-    </div>
-  )
+      )}
+    </>
+  );
 }
+
+
