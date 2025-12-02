@@ -6,7 +6,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class StoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
-        fields = ['id', 'name', 'pricing_logic', 'expired_days']
+        fields = ['id', 'name', 'pricing_logic', 'membership_validity_period']
 
 class DailyStoreSalesSerializer(serializers.ModelSerializer):
     class Meta:

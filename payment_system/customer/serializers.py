@@ -27,8 +27,8 @@ class MembershipSerializer(serializers.ModelSerializer):
         read_only_fields = ['store']
     
     def get_is_expired(self, obj):
-        if not obj.register_date or not obj.store or not obj.store.expired_days:
+        if not obj.register_date or not obj.store or not obj.store.membership_validity_period:
             return False
         from datetime import date, timedelta
-        expiry_date = obj.register_date + timedelta(days=obj.store.expired_days)
+        expiry_date = obj.register_date + timedelta(days=obj.store.membership_validity_period)
         return date.today() > expiry_date
