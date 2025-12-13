@@ -35,27 +35,25 @@ services:
     # command: sh -lc "cd frontend/webapp && npm ci && node --inspect=0.0.0.0:9229 ./node_modules/.bin/next dev --hostname 0.0.0.0 -p 3000"
     command: sh -lc "cd frontend/webapp && npm ci && npx next dev --hostname 0.0.0.0 -p 3000"
 
-  # MySQLデータベースサービス
+  # PostgreSQL データベースサービス（本番用 docker-compose.yml と揃える）
   db:
-    image: mysql:8.0
+    image: postgres:16
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: payment_system_db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      POSTGRES_DB: payment_system_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
       TZ: 'Asia/Tokyo'
-    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     volumes:
       # 名前付きボリュームでデータを永続化
-      - mysql-data:/var/lib/mysql
+      - db-store:/var/lib/postgresql/data
     ports:
-      - "3306:3306"
+      - "5432:5432"
     healthcheck:
-      test: mysqladmin ping
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
       interval: 15s
       retries: 5
 
 # データ永続化のための名前付きボリューム
 volumes:
-  mysql-data:
+  db-store:
