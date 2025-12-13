@@ -133,12 +133,12 @@ WSGI_APPLICATION = 'payment_system.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'payment_system_db',
         'USER': 'user',
         'PASSWORD': 'password',
         'HOST': 'db',
-        'PORT': '3306'
+        'PORT': '5432',
     }
 }
 

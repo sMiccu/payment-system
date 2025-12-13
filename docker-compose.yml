@@ -3,18 +3,16 @@ services:
 
   db:
     container_name: payment-system-db
-    image: mysql:8.0
+    image: postgres:16
     volumes:
-      - db-store:/var/lib/mysql
+      - db-store:/var/lib/postgresql/data
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: payment_system_db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      POSTGRES_DB: payment_system_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
       TZ: 'Asia/Tokyo'
-    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     healthcheck:
-      test: mysqladmin ping
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
       interval: 15s
       retries: 5
 

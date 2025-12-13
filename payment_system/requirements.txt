@@ -11,7 +11,7 @@ drf-spectacular==0.28.0
 inflection==0.5.1
 jsonschema==4.25.0
 jsonschema-specifications==2025.4.1
-mysqlclient==2.2.7
+psycopg[binary]==3.3.2
 phonenumbers==9.0.18
 pygraphviz==1.14
 PyJWT==2.10.1
