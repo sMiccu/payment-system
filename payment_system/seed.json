@@ -1,0 +1,685 @@
+[
+  {
+    "model": "control.store",
+    "pk": 1,
+    "fields": {
+      "name": "A001",
+      "created_at": "2025-10-23T12:21:45.842Z",
+      "updated_at": "2025-10-23T12:21:45.842Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "control.customuser",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$3gcljsybg0DOVNgPr23xlV$ltUogQL2mk2tU1c+Lg+YJ/A52RNi+gMFzMUO0R7NAUw=",
+      "last_login": "2025-10-23T12:53:10.644Z",
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-10-23T12:21:16.569Z",
+      "store": null,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "control.customuser",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$95FmleiGdFVUWxqoGhx5LC$jfQYOGS8BmPuv6P3jJd9DZE6TXp5dhH/5uSrZP2FYMw=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "test_user",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-10-23T12:24:35Z",
+      "store": 1,
+      "groups": [
+        1
+      ],
+      "user_permissions": [
+        13
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+      "name": "test_group",
+      "permissions": [
+        33,
+        34,
+        35,
+        36,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        57,
+        58,
+        59,
+        60
+      ]
+    }
+  },
+  {
+    "model": "control.store",
+    "pk": 2,
+    "fields": {
+      "name": "B002",
+      "created_at": "2025-11-01T10:00:00Z",
+      "updated_at": "2025-11-01T10:00:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "control.store",
+    "pk": 3,
+    "fields": {
+      "name": "C003",
+      "created_at": "2025-11-01T10:00:00Z",
+      "updated_at": "2025-11-01T10:00:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "menu.menu",
+    "pk": 1,
+    "fields": {
+      "name": "ホットコーヒー",
+      "price": 300,
+      "store": 1,
+      "created_at": "2025-11-01T10:05:00Z",
+      "updated_at": "2025-11-01T10:05:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "menu.menu",
+    "pk": 2,
+    "fields": {
+      "name": "サンドイッチ",
+      "price": 600,
+      "store": 1,
+      "created_at": "2025-11-01T10:05:00Z",
+      "updated_at": "2025-11-01T10:05:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "menu.menu",
+    "pk": 3,
+    "fields": {
+      "name": "ケーキ",
+      "price": 500,
+      "store": 1,
+      "created_at": "2025-11-01T10:05:00Z",
+      "updated_at": "2025-11-01T10:05:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "menu.menu",
+    "pk": 4,
+    "fields": {
+      "name": "エスプレッソ",
+      "price": 350,
+      "store": 2,
+      "created_at": "2025-11-01T10:06:00Z",
+      "updated_at": "2025-11-01T10:06:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "menu.menu",
+    "pk": 5,
+    "fields": {
+      "name": "パスタ",
+      "price": 900,
+      "store": 2,
+      "created_at": "2025-11-01T10:06:00Z",
+      "updated_at": "2025-11-01T10:06:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "menu.menu",
+    "pk": 6,
+    "fields": {
+      "name": "紅茶",
+      "price": 280,
+      "store": 3,
+      "created_at": "2025-11-01T10:07:00Z",
+      "updated_at": "2025-11-01T10:07:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "menu.menu",
+    "pk": 7,
+    "fields": {
+      "name": "カレー",
+      "price": 800,
+      "store": 3,
+      "created_at": "2025-11-01T10:07:00Z",
+      "updated_at": "2025-11-01T10:07:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "customer.membership",
+    "pk": 1,
+    "fields": {
+      "first_name": "Taro",
+      "last_name": "Yamada",
+      "first_name_kana": "タロウ",
+      "last_name_kana": "ヤマダ",
+      "phone_number": "+819011111111",
+      "store": 1,
+      "created_at": "2025-11-01T10:10:00Z",
+      "updated_at": "2025-11-01T10:10:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "customer.membership",
+    "pk": 2,
+    "fields": {
+      "first_name": "Hanako",
+      "last_name": "Suzuki",
+      "first_name_kana": "ハナコ",
+      "last_name_kana": "スズキ",
+      "phone_number": "+819022222222",
+      "store": 2,
+      "created_at": "2025-11-01T10:10:00Z",
+      "updated_at": "2025-11-01T10:10:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "customer.membership",
+    "pk": 3,
+    "fields": {
+      "first_name": "Ken",
+      "last_name": "Sato",
+      "first_name_kana": "ケン",
+      "last_name_kana": "サトウ",
+      "phone_number": "+819033333333",
+      "store": 3,
+      "created_at": "2025-11-01T10:10:00Z",
+      "updated_at": "2025-11-01T10:10:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "customer.customer",
+    "pk": 1,
+    "fields": {
+      "name": "Alice",
+      "store": 1,
+      "membership": 1,
+      "start_datetime": "2025-11-01T11:00:00Z",
+      "end_datetime": null,
+      "created_at": "2025-11-01T00:00:00Z",
+      "updated_at": "2025-11-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "customer.customer",
+    "pk": 2,
+    "fields": {
+      "name": "Bob",
+      "store": 1,
+      "membership": 1,
+      "start_datetime": "2025-11-01T11:20:00Z",
+      "end_datetime": null,
+      "created_at": "2025-11-01T00:00:00Z",
+      "updated_at": "2025-11-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "customer.customer",
+    "pk": 3,
+    "fields": {
+      "name": "Carol",
+      "store": 1,
+      "membership": null,
+      "start_datetime": "2025-11-01T09:00:00Z",
+      "end_datetime": "2025-11-01T10:30:00Z",
+      "created_at": "2025-11-01T00:00:00Z",
+      "updated_at": "2025-11-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "customer.customer",
+    "pk": 4,
+    "fields": {
+      "name": "Eve",
+      "store": 2,
+      "membership": 2,
+      "start_datetime": "2025-10-31T15:00:00Z",
+      "end_datetime": "2025-10-31T16:00:00Z",
+      "created_at": "2025-11-01T00:00:00Z",
+      "updated_at": "2025-11-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "customer.customer",
+    "pk": 5,
+    "fields": {
+      "name": "Dave",
+      "store": 2,
+      "membership": null,
+      "start_datetime": "2025-11-01T12:00:00Z",
+      "end_datetime": null,
+      "created_at": "2025-11-01T00:00:00Z",
+      "updated_at": "2025-11-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "customer.customer",
+    "pk": 6,
+    "fields": {
+      "name": "Frank",
+      "store": 3,
+      "membership": 3,
+      "start_datetime": "2025-11-01T12:30:00Z",
+      "end_datetime": null,
+      "created_at": "2025-11-01T00:00:00Z",
+      "updated_at": "2025-11-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "customer.customer",
+    "pk": 7,
+    "fields": {
+      "name": "Grace",
+      "store": 3,
+      "membership": 3,
+      "start_datetime": "2025-11-01T12:45:00Z",
+      "end_datetime": null,
+      "created_at": "2025-11-01T00:00:00Z",
+      "updated_at": "2025-11-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "customer.customerbreak",
+    "pk": 1,
+    "fields": {
+      "customer": 2,
+      "start_datetime": "2025-11-01T12:00:00Z",
+      "end_datetime": null,
+      "created_at": "2025-11-01T12:00:00Z",
+      "updated_at": "2025-11-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "customer.customerbreak",
+    "pk": 2,
+    "fields": {
+      "customer": 7,
+      "start_datetime": "2025-11-01T13:15:00Z",
+      "end_datetime": null,
+      "created_at": "2025-11-01T13:15:00Z",
+      "updated_at": "2025-11-01T13:15:00Z"
+    }
+  },
+  {
+    "model": "order.order",
+    "pk": 1,
+    "fields": {
+      "customer": 1,
+      "total_amount": "1200.00",
+      "created_at": "2025-11-01T11:10:00Z",
+      "updated_at": "2025-11-01T11:10:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.order",
+    "pk": 2,
+    "fields": {
+      "customer": 2,
+      "total_amount": "0.00",
+      "created_at": "2025-11-01T12:05:00Z",
+      "updated_at": "2025-11-01T12:05:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.order",
+    "pk": 3,
+    "fields": {
+      "customer": 3,
+      "total_amount": "1000.00",
+      "created_at": "2025-11-01T09:30:00Z",
+      "updated_at": "2025-11-01T10:00:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.order",
+    "pk": 4,
+    "fields": {
+      "customer": 4,
+      "total_amount": "1250.00",
+      "created_at": "2025-10-31T15:10:00Z",
+      "updated_at": "2025-10-31T15:40:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.order",
+    "pk": 5,
+    "fields": {
+      "customer": 5,
+      "total_amount": "0.00",
+      "created_at": "2025-11-01T12:05:00Z",
+      "updated_at": "2025-11-01T12:05:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.order",
+    "pk": 6,
+    "fields": {
+      "customer": 6,
+      "total_amount": "1080.00",
+      "created_at": "2025-11-01T12:40:00Z",
+      "updated_at": "2025-11-01T12:40:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.order",
+    "pk": 7,
+    "fields": {
+      "customer": 7,
+      "total_amount": "0.00",
+      "created_at": "2025-11-01T13:20:00Z",
+      "updated_at": "2025-11-01T13:20:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.orderitem",
+    "pk": 1,
+    "fields": {
+      "order": 1,
+      "menu": 1,
+      "quantity": 2,
+      "subtotal": "600.00",
+      "created_at": "2025-11-01T11:10:00Z",
+      "updated_at": "2025-11-01T11:10:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.orderitem",
+    "pk": 2,
+    "fields": {
+      "order": 1,
+      "menu": 2,
+      "quantity": 1,
+      "subtotal": "600.00",
+      "created_at": "2025-11-01T11:10:00Z",
+      "updated_at": "2025-11-01T11:10:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.orderitem",
+    "pk": 3,
+    "fields": {
+      "order": 3,
+      "menu": 3,
+      "quantity": 2,
+      "subtotal": "1000.00",
+      "created_at": "2025-11-01T09:30:00Z",
+      "updated_at": "2025-11-01T09:30:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.orderitem",
+    "pk": 4,
+    "fields": {
+      "order": 4,
+      "menu": 4,
+      "quantity": 1,
+      "subtotal": "350.00",
+      "created_at": "2025-10-31T15:10:00Z",
+      "updated_at": "2025-10-31T15:10:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.orderitem",
+    "pk": 5,
+    "fields": {
+      "order": 4,
+      "menu": 5,
+      "quantity": 1,
+      "subtotal": "900.00",
+      "created_at": "2025-10-31T15:10:00Z",
+      "updated_at": "2025-10-31T15:10:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.orderitem",
+    "pk": 6,
+    "fields": {
+      "order": 6,
+      "menu": 6,
+      "quantity": 1,
+      "subtotal": "280.00",
+      "created_at": "2025-11-01T12:40:00Z",
+      "updated_at": "2025-11-01T12:40:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "order.orderitem",
+    "pk": 7,
+    "fields": {
+      "order": 6,
+      "menu": 7,
+      "quantity": 1,
+      "subtotal": "800.00",
+      "created_at": "2025-11-01T12:40:00Z",
+      "updated_at": "2025-11-01T12:40:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "control.dailystoresales",
+    "pk": 1,
+    "fields": {
+      "date": "2025-11-01",
+      "store": 1,
+      "cash_sales": "15000.00",
+      "paypay_sales": "8000.00",
+      "created_at": "2025-11-01T00:00:00Z",
+      "updated_at": "2025-11-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "control.dailystoresales",
+    "pk": 2,
+    "fields": {
+      "date": "2025-11-01",
+      "store": 2,
+      "cash_sales": "9000.00",
+      "paypay_sales": "12000.00",
+      "created_at": "2025-11-01T00:00:00Z",
+      "updated_at": "2025-11-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "control.dailystoresales",
+    "pk": 3,
+    "fields": {
+      "date": "2025-11-01",
+      "store": 3,
+      "cash_sales": "11000.00",
+      "paypay_sales": "5000.00",
+      "created_at": "2025-11-01T00:00:00Z",
+      "updated_at": "2025-11-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "control.durationrate",
+    "pk": 1,
+    "fields": {
+      "minutes": "30.00",
+      "membership_price": 500,
+      "general_price": 600,
+      "store": 1,
+      "created_at": "2025-11-01T10:15:00Z",
+      "updated_at": "2025-11-01T10:15:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "control.durationrate",
+    "pk": 2,
+    "fields": {
+      "minutes": "60.00",
+      "membership_price": 900,
+      "general_price": 1000,
+      "store": 1,
+      "created_at": "2025-11-01T10:15:00Z",
+      "updated_at": "2025-11-01T10:15:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "control.durationrate",
+    "pk": 3,
+    "fields": {
+      "minutes": "30.00",
+      "membership_price": 550,
+      "general_price": 650,
+      "store": 2,
+      "created_at": "2025-11-01T10:16:00Z",
+      "updated_at": "2025-11-01T10:16:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "control.durationrate",
+    "pk": 4,
+    "fields": {
+      "minutes": "60.00",
+      "membership_price": 950,
+      "general_price": 1050,
+      "store": 2,
+      "created_at": "2025-11-01T10:16:00Z",
+      "updated_at": "2025-11-01T10:16:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "control.durationrate",
+    "pk": 5,
+    "fields": {
+      "minutes": "30.00",
+      "membership_price": 480,
+      "general_price": 580,
+      "store": 3,
+      "created_at": "2025-11-01T10:17:00Z",
+      "updated_at": "2025-11-01T10:17:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "control.durationrate",
+    "pk": 6,
+    "fields": {
+      "minutes": "60.00",
+      "membership_price": 880,
+      "general_price": 980,
+      "store": 3,
+      "created_at": "2025-11-01T10:17:00Z",
+      "updated_at": "2025-11-01T10:17:00Z",
+      "deleted_at": null
+    }
+  },
+  {
+    "model": "control.customuser",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$95FmleiGdFVUWxqoGhx5LC$jfQYOGS8BmPuv6P3jJd9DZE6TXp5dhH/5uSrZP2FYMw=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "testb002",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-11-01T10:20:00Z",
+      "store": 2,
+      "groups": [
+        1
+      ],
+      "user_permissions": [
+        13
+      ]
+    }
+  },
+  {
+    "model": "control.customuser",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$95FmleiGdFVUWxqoGhx5LC$jfQYOGS8BmPuv6P3jJd9DZE6TXp5dhH/5uSrZP2FYMw=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "testc003",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-11-01T10:20:00Z",
+      "store": 3,
+      "groups": [
+        1
+      ],
+      "user_permissions": [
+        13
+      ]
+    }
+  }
+]
