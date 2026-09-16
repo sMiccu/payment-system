@@ -32,7 +32,7 @@
     "model": "control.customuser",
     "pk": 2,
     "fields": {
-      "password": "pbkdf2_sha256$1000000$95FmleiGdFVUWxqoGhx5LC$jfQYOGS8BmPuv6P3jJd9DZE6TXp5dhH/5uSrZP2FYMw=",
+      "password": "pbkdf2_sha256$1000000$wbe8uIqpz47hvYg5nVvEWz$YX4fffKv8YZlyd47rDgkhu3AKp36ZNE6QTFXzXyuyIs=",
       "last_login": null,
       "is_superuser": false,
       "username": "test_user",
@@ -113,12 +113,83 @@
     }
   },
   {
+    "model": "menu.category",
+    "pk": 1,
+    "fields": {
+      "name": "ドリンク",
+      "store": 1,
+      "created_at": "2025-11-01T10:03:00Z",
+      "updated_at": "2025-11-01T10:03:00Z"
+    }
+  },
+  {
+    "model": "menu.category",
+    "pk": 2,
+    "fields": {
+      "name": "フード",
+      "store": 1,
+      "created_at": "2025-11-01T10:03:00Z",
+      "updated_at": "2025-11-01T10:03:00Z"
+    }
+  },
+  {
+    "model": "menu.category",
+    "pk": 3,
+    "fields": {
+      "name": "デザート",
+      "store": 1,
+      "created_at": "2025-11-01T10:03:00Z",
+      "updated_at": "2025-11-01T10:03:00Z"
+    }
+  },
+  {
+    "model": "menu.category",
+    "pk": 4,
+    "fields": {
+      "name": "ドリンク",
+      "store": 2,
+      "created_at": "2025-11-01T10:03:00Z",
+      "updated_at": "2025-11-01T10:03:00Z"
+    }
+  },
+  {
+    "model": "menu.category",
+    "pk": 5,
+    "fields": {
+      "name": "フード",
+      "store": 2,
+      "created_at": "2025-11-01T10:03:00Z",
+      "updated_at": "2025-11-01T10:03:00Z"
+    }
+  },
+  {
+    "model": "menu.category",
+    "pk": 6,
+    "fields": {
+      "name": "ドリンク",
+      "store": 3,
+      "created_at": "2025-11-01T10:03:00Z",
+      "updated_at": "2025-11-01T10:03:00Z"
+    }
+  },
+  {
+    "model": "menu.category",
+    "pk": 7,
+    "fields": {
+      "name": "フード",
+      "store": 3,
+      "created_at": "2025-11-01T10:03:00Z",
+      "updated_at": "2025-11-01T10:03:00Z"
+    }
+  },
+  {
     "model": "menu.menu",
     "pk": 1,
     "fields": {
       "name": "ホットコーヒー",
       "price": 300,
       "store": 1,
+      "category": 1,
       "created_at": "2025-11-01T10:05:00Z",
       "updated_at": "2025-11-01T10:05:00Z",
       "deleted_at": null
@@ -131,6 +202,7 @@
       "name": "サンドイッチ",
       "price": 600,
       "store": 1,
+      "category": 2,
       "created_at": "2025-11-01T10:05:00Z",
       "updated_at": "2025-11-01T10:05:00Z",
       "deleted_at": null
@@ -143,6 +215,7 @@
       "name": "ケーキ",
       "price": 500,
       "store": 1,
+      "category": 3,
       "created_at": "2025-11-01T10:05:00Z",
       "updated_at": "2025-11-01T10:05:00Z",
       "deleted_at": null
@@ -155,6 +228,7 @@
       "name": "エスプレッソ",
       "price": 350,
       "store": 2,
+      "category": 4,
       "created_at": "2025-11-01T10:06:00Z",
       "updated_at": "2025-11-01T10:06:00Z",
       "deleted_at": null
@@ -167,6 +241,7 @@
       "name": "パスタ",
       "price": 900,
       "store": 2,
+      "category": 5,
       "created_at": "2025-11-01T10:06:00Z",
       "updated_at": "2025-11-01T10:06:00Z",
       "deleted_at": null
@@ -179,6 +254,7 @@
       "name": "紅茶",
       "price": 280,
       "store": 3,
+      "category": 6,
       "created_at": "2025-11-01T10:07:00Z",
       "updated_at": "2025-11-01T10:07:00Z",
       "deleted_at": null
@@ -191,6 +267,7 @@
       "name": "カレー",
       "price": 800,
       "store": 3,
+      "category": 7,
       "created_at": "2025-11-01T10:07:00Z",
       "updated_at": "2025-11-01T10:07:00Z",
       "deleted_at": null
@@ -640,7 +717,7 @@
     "model": "control.customuser",
     "pk": 3,
     "fields": {
-      "password": "pbkdf2_sha256$1000000$95FmleiGdFVUWxqoGhx5LC$jfQYOGS8BmPuv6P3jJd9DZE6TXp5dhH/5uSrZP2FYMw=",
+      "password": "pbkdf2_sha256$1000000$wbe8uIqpz47hvYg5nVvEWz$YX4fffKv8YZlyd47rDgkhu3AKp36ZNE6QTFXzXyuyIs=",
       "last_login": null,
       "is_superuser": false,
       "username": "testb002",
@@ -663,7 +740,7 @@
     "model": "control.customuser",
     "pk": 4,
     "fields": {
-      "password": "pbkdf2_sha256$1000000$95FmleiGdFVUWxqoGhx5LC$jfQYOGS8BmPuv6P3jJd9DZE6TXp5dhH/5uSrZP2FYMw=",
+      "password": "pbkdf2_sha256$1000000$wbe8uIqpz47hvYg5nVvEWz$YX4fffKv8YZlyd47rDgkhu3AKp36ZNE6QTFXzXyuyIs=",
       "last_login": null,
       "is_superuser": false,
       "username": "testc003",
